@@ -2,20 +2,160 @@
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 
-const posts = (await getCollection("blog"))
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const allTags = Array.from(
+  new Set(posts.flatMap((post) => post.data.tags))
+).sort();
+
+const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
 ---
 
 <Base title="博客" description="博客文章列表">
   <h1>博客</h1>
-  <ul>
+
+  <div class="tag-filter" role="group" aria-label="标签筛选">
+    <button class="tag-btn active" data-tag="*" type="button">全部</button>
     {
-      posts.map((post) => (
-        <li>
-          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-          <p>{post.data.description}</p>
-        </li>
+      allTags.map((tag) => (
+        <button class="tag-btn" data-tag={tag} type="button">
+          {tag}
+        </button>
       ))
     }
-  </ul>
+  </div>
+
+  <div class="grid">
+    {
+      posts.map((post) => (
+        <a
+          class="card"
+          href={`/blog/${post.id}`}
+          data-tags={post.data.tags.join(",")}
+        >
+          <div class="card-meta">
+            <time>{formatDate(post.data.pubDate)}</time>
+          </div>
+          <h3>{post.data.title}</h3>
+          <p>{post.data.description}</p>
+          <div class="tags">
+            {post.data.tags.map((tag) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+        </a>
+      ))
+    }
+  </div>
 </Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-btn");
+  const cards = document.querySelectorAll<HTMLElement>(".card[data-tags]");
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tag = btn.dataset.tag;
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      cards.forEach((card) => {
+        const cardTags = (card.dataset.tags || "").split(",");
+        const show = tag === "*" || cardTags.includes(tag);
+        card.style.display = show ? "" : "none";
+      });
+    });
+  });
+</script>
+
+<style>
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .tag-btn {
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    transition: all 0.15s ease;
+  }
+
+  .tag-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .tag-btn.active {
+    color: var(--accent-contrast);
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    display: block;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .card-meta time {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .card h3 {
+    margin: 8px 0;
+    font-size: 1.15rem;
+  }
+
+  .card p {
+    margin: 0 0 12px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 10px;
+  }
+</style>

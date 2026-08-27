@@ -1,0 +1,57 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="关于 · 你的名字" description="关于你的名字：一段中文介绍与技能列表">
+  <article class="prose about">
+    <h1>关于我</h1>
+    <p>
+      你好，我是你的名字，一名占位前端工程师。我热衷于把复杂的产品想法变成简洁、可维护的界面，
+      平时喜欢折腾 Web 性能、设计系统与开源工具。这里记录我的思考、项目与学习笔记。
+    </p>
+    <p>
+      工作之外，我喜欢阅读、摄影与长跑，相信长期主义能把小事做成作品。如果你对我的内容感兴趣，
+      欢迎通过页面底部的社交链接与我联系。
+    </p>
+
+    <h2>技能</h2>
+    <ul class="skills">
+      <li>前端框架：Astro、React、Vue、Svelte</li>
+      <li>语言：TypeScript、JavaScript、HTML、CSS</li>
+      <li>工程化：Vite、pnpm、CI/CD、Monorepo</li>
+      <li>其他：Node.js、可视化、Web 性能优化</li>
+    </ul>
+  </article>
+</Base>
+
+<style>
+  .about {
+    padding: 32px 0;
+  }
+
+  .about h1 {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  .about h2 {
+    margin-top: 32px;
+  }
+
+  .skills {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .skills li {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+</style>
