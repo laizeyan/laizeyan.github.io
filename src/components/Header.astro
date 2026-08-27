@@ -6,6 +6,7 @@ const nav = [
   { href: "/blog", label: "博客" },
   { href: "/projects", label: "项目" },
   { href: "/about", label: "关于" },
+  { href: "/search", label: "搜索" },
 ];
 
 const current = Astro.url.pathname;
@@ -28,6 +29,7 @@ const current = Astro.url.pathname;
       }
     </nav>
     <ThemeToggle />
+    <a href="/rss.xml" class="rss-link" title="RSS 订阅" aria-label="RSS 订阅">RSS</a>
   </div>
 </header>
 
@@ -77,6 +79,20 @@ const current = Astro.url.pathname;
 
   .nav-link.active {
     font-weight: 600;
+  }
+
+  .rss-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+
+  .rss-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   @media (max-width: 640px) {

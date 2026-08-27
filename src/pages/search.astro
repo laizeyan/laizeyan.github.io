@@ -1,0 +1,24 @@
+---
+import Base from "../layouts/Base.astro";
+
+const title = "搜索";
+const description = "站内全文搜索";
+---
+
+<Base title={title} description={description}>
+  <h1>站内搜索</h1>
+  <p class="search-hint">输入关键词检索全站内容（由 Pagefind 提供）。</p>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <div id="search"></div>
+  <script src="/pagefind/pagefind-ui.js" is:inline></script>
+  <script is:inline>
+    new PagefindUI({ element: "#search", showSubResults: true });
+  </script>
+</Base>
+
+<style>
+  .search-hint {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+</style>
