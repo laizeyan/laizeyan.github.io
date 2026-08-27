@@ -1,0 +1,50 @@
+---
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  class="theme-toggle"
+  aria-label="切换明暗主题"
+  title="切换明暗主题"
+>
+  <span class="theme-toggle-icon" aria-hidden="true"></span>
+</button>
+
+<script>
+  const btn = document.getElementById("theme-toggle");
+  btn?.addEventListener("click", () => {
+    const root = document.documentElement;
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    localStorage.setItem("theme", next);
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--bg-elevated);
+    color: var(--text);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+  }
+
+  .theme-toggle-icon::before {
+    content: "🌙";
+  }
+
+  :global([data-theme="dark"]) .theme-toggle-icon::before {
+    content: "☀️";
+  }
+</style>

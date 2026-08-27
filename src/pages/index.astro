@@ -1,13 +1,13 @@
 ---
+import Base from "../layouts/Base.astro";
 ---
 
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>你的名字 · 个人站点</title>
-  </head>
-  <body>
+<Base
+  title="你的名字 · 个人站点"
+  description="你的名字 · 一句话简介"
+>
+  <div class="prose">
     <h1>你好，这是我的个人站点</h1>
-  </body>
-</html>
+    <p>你的名字 · 一句话简介</p>
+  </div>
+</Base>
