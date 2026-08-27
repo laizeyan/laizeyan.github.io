@@ -2,20 +2,32 @@
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 
 const allTags = Array.from(
   new Set(posts.flatMap((post) => post.data.tags))
 ).sort();
 
-const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
+const formatDate = (d: Date) =>
+  d.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 ---
 
-<Base title="博客" description="博客文章列表">
-  <h1>博客</h1>
+<Base title="博客 · Ze'Yan" description="博客文章列表">
+  <header class="page-head reveal">
+    <p class="section-kicker">目录</p>
+    <h1>博客</h1>
+    <p class="lead page-lead">技术文章与随笔，按时间倒序排印。</p>
+  </header>
 
-  <div class="tag-filter" role="group" aria-label="标签筛选">
+  <hr class="rule" />
+
+  <div class="tag-filter reveal" role="group" aria-label="标签筛选">
     <button class="tag-btn active" data-tag="*" type="button">全部</button>
     {
       allTags.map((tag) => (
@@ -26,33 +38,31 @@ const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
     }
   </div>
 
-  <div class="grid">
+  <ol class="toc reveal">
     {
       posts.map((post) => (
-        <a
-          class="card"
-          href={`/blog/${post.id}`}
-          data-tags={post.data.tags.join(",")}
-        >
-          <div class="card-meta">
-            <time>{formatDate(post.data.pubDate)}</time>
+        <li class="toc-item" data-tags={post.data.tags.join(",")}>
+          <time class="toc-date">{formatDate(post.data.pubDate)}</time>
+          <div class="toc-main">
+            <a class="toc-title" href={`/blog/${post.id}`}>
+              {post.data.title}
+            </a>
+            <p class="toc-desc">{post.data.description}</p>
           </div>
-          <h3>{post.data.title}</h3>
-          <p>{post.data.description}</p>
-          <div class="tags">
+          <div class="toc-tags">
             {post.data.tags.map((tag) => (
               <span class="tag">{tag}</span>
             ))}
           </div>
-        </a>
+        </li>
       ))
     }
-  </div>
+  </ol>
 </Base>
 
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-btn");
-  const cards = document.querySelectorAll<HTMLElement>(".card[data-tags]");
+  const items = document.querySelectorAll<HTMLElement>(".toc-item[data-tags]");
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -60,37 +70,49 @@ const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
       buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
-      cards.forEach((card) => {
-        const cardTags = (card.dataset.tags || "").split(",");
-        const show = tag === "*" || cardTags.includes(tag);
-        card.style.display = show ? "" : "none";
+      items.forEach((item) => {
+        const itemTags = (item.dataset.tags || "").split(",");
+        const show = tag === "*" || itemTags.includes(tag);
+        item.style.display = show ? "" : "none";
       });
     });
   });
 </script>
 
 <style>
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+  .page-head {
+    padding: 40px 0 20px;
+  }
+
+  .page-head h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 7vw, 4rem);
+    margin: 6px 0 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .page-lead {
+    margin: 0;
+    max-width: 560px;
   }
 
   .tag-filter {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 28px;
+    margin: 24px 0;
   }
 
   .tag-btn {
     cursor: pointer;
     font: inherit;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
     color: var(--text-muted);
-    background-color: var(--bg-elevated);
+    background-color: transparent;
     border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 6px 14px;
+    border-radius: 2px;
+    padding: 5px 13px;
     transition: all 0.15s ease;
   }
 
@@ -105,57 +127,65 @@ const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
     border-color: var(--accent);
   }
 
-  .grid {
+  .toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .toc-item {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: 110px 1fr auto;
     gap: 20px;
+    align-items: baseline;
+    padding: 20px 0;
+    border-top: 1px solid var(--border);
   }
 
-  .card {
-    display: block;
-    background-color: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.15s ease, border-color 0.15s ease;
+  .toc-item:last-child {
+    border-bottom: 1px solid var(--border);
   }
 
-  .card:hover {
-    transform: translateY(-3px);
-    border-color: var(--accent);
-    text-decoration: none;
-  }
-
-  .card-meta time {
+  .toc-date {
     color: var(--text-muted);
     font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
   }
 
-  .card h3 {
-    margin: 8px 0;
-    font-size: 1.15rem;
+  .toc-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: var(--text);
+    text-decoration: none;
   }
 
-  .card p {
-    margin: 0 0 12px;
+  .toc-title:hover {
+    color: var(--accent);
+  }
+
+  .toc-desc {
+    margin: 6px 0 0;
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.92rem;
   }
 
-  .tags {
+  .toc-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    align-content: start;
+    justify-content: flex-end;
   }
 
-  .tag {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 2px 10px;
+  @media (max-width: 720px) {
+    .toc-item {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .toc-tags {
+      justify-content: flex-start;
+    }
   }
 </style>

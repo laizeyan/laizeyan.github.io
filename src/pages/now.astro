@@ -1,0 +1,80 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="近况 · Ze'Yan" description="Ze'Yan 的近况（Now 页）">
+  <article class="prose now reveal">
+    <header class="now-head">
+      <p class="section-kicker">近况</p>
+      <h1>Now</h1>
+      <p class="lead">这一阵子在忙些什么——更新于 2026 年夏。</p>
+    </header>
+
+    <hr class="rule" />
+
+    <div class="now-body">
+      <p>最近在…</p>
+      <ul class="now-list">
+        <li>重做个人站点，尝试「编辑杂志风」的版式与排版语言。</li>
+        <li>读《<em>Thinking, Fast and Slow</em>》，顺带整理一些阅读笔记。</li>
+        <li>练习长曝光摄影，周末常去江边与旧城区扫街。</li>
+        <li>把日常开发环境迁移到 Arch Linux + Hyprland，折腾平铺窗口管理。</li>
+        <li>保持每周两次长跑，目标下半年完成一场半程马拉松。</li>
+      </ul>
+      <p>
+        这个页面受 <a href="https://nownownow.com" target="_blank" rel="noopener"
+          >nownownow.com</a
+        > 启发，记录「此刻」而非「全部」。它会随生活节奏慢慢变化。
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .now {
+    padding: 40px 0;
+  }
+
+  .now-head h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    margin: 8px 0 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .now-body {
+    margin-top: 28px;
+    font-family: "Noto Serif SC", var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.85;
+  }
+
+  .now-body :global(p) {
+    margin: 0 0 1.2em;
+  }
+
+  .now-list {
+    list-style: none;
+    margin: 0 0 1.4em;
+    padding: 0;
+  }
+
+  .now-list li {
+    position: relative;
+    padding: 12px 0 12px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .now-list li:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .now-list li::before {
+    content: "§";
+    position: absolute;
+    left: 0;
+    top: 12px;
+    color: var(--accent);
+    font-family: var(--serif);
+    font-weight: 700;
+  }
+</style>

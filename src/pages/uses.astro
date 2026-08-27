@@ -1,0 +1,108 @@
+---
+import Base from "../layouts/Base.astro";
+
+const gear = [
+  {
+    group: "硬件",
+    items: [
+      "笔记本：占位轻薄本，32GB 内存，日常开发主力",
+      "显示器：27 寸 4K，竖屏放文档与终端",
+      "键盘：客制化 65% 机械键盘，茶轴",
+      "鼠标：轻量无线鼠标",
+      "相机：一台入门无反，配 35mm 定焦",
+    ],
+  },
+  {
+    group: "软件",
+    items: [
+      "系统：Arch Linux + Hyprland 平铺窗口管理",
+      "编辑器：Neovim / VS Code，配相同配色",
+      "终端：Ghostty + zsh + 极简提示符",
+      "浏览器：日常 Firefox，调试用 Chromium",
+      "笔记：纯文本 + Git 管理的知识库",
+    ],
+  },
+  {
+    group: "开发工具",
+    items: [
+      "包管理：pnpm，项目级隔离",
+      "构建：Vite / Astro",
+      "设计：Figma 画草图与组件",
+      "同步：rclone 备份到本地 NAS",
+    ],
+  },
+];
+---
+
+<Base title="装备 · Ze'Yan" description="Ze'Yan 使用的工具与装备（Uses 页）">
+  <article class="prose uses reveal">
+    <header class="uses-head">
+      <p class="section-kicker">装备</p>
+      <h1>Uses</h1>
+      <p class="lead">
+        我日常依赖的工具与设备清单——受 uses.tech 启发的「在用」页面。
+      </p>
+    </header>
+
+    <hr class="rule" />
+
+    <div class="uses-body">
+      {
+        gear.map((section) => (
+          <section class="uses-group">
+            <h2>{section.group}</h2>
+            <ul class="uses-list">
+              {section.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </article>
+</Base>
+
+<style>
+  .uses {
+    padding: 40px 0;
+  }
+
+  .uses-head h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    margin: 8px 0 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .uses-body {
+    margin-top: 28px;
+  }
+
+  .uses-group {
+    margin-bottom: 32px;
+  }
+
+  .uses-group h2 {
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .uses-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0;
+  }
+
+  .uses-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: "Noto Serif SC", var(--serif);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+</style>
