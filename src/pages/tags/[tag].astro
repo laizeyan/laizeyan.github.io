@@ -2,9 +2,21 @@
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const tags = Array.from(
+    new Set(posts.flatMap((post) => post.data.tags))
+  ).sort();
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag, posts },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+const tagged = posts
+  .filter((post) => post.data.tags.includes(tag))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const allTags = Array.from(
   new Set(posts.flatMap((post) => post.data.tags))
@@ -18,29 +30,38 @@ const formatDate = (d: Date) =>
   });
 ---
 
-<Base title="博客 · Ze'Yan" description="博客文章列表">
+<Base
+  title={`标签：${tag} · Ze'Yan`}
+  description={`标签「${tag}」下的所有文章`}
+>
   <header class="page-head reveal">
-    <p class="section-kicker">目录</p>
-    <h1>博客</h1>
-    <p class="lead page-lead">技术文章与随笔，按时间倒序排印。</p>
+    <p class="section-kicker">标签</p>
+    <h1>#{tag}</h1>
+    <p class="lead page-lead">
+      共 {tagged.length} 篇与「{tag}」相关的文章，按时间倒序排印。
+    </p>
   </header>
 
   <hr class="rule" />
 
   <div class="tag-filter reveal" role="group" aria-label="标签筛选">
-    <button class="tag-btn active" data-tag="*" type="button">全部</button>
+    <a class="tag-btn" href="/tags" data-tag="*">全部</a>
     {
-      allTags.map((tag) => (
-        <button class="tag-btn" data-tag={tag} type="button">
-          {tag}
-        </button>
+      allTags.map((t) => (
+        <a
+          class:list={["tag-btn", { active: t === tag }]}
+          href={`/tags/${t}`}
+          data-tag={t}
+        >
+          {t}
+        </a>
       ))
     }
   </div>
 
   <ol class="toc reveal">
     {
-      posts.map((post) => (
+      tagged.map((post) => (
         <li class="toc-item" data-tags={post.data.tags.join(",")}>
           <time class="toc-date">{formatDate(post.data.pubDate)}</time>
           <div class="toc-main">
@@ -50,8 +71,10 @@ const formatDate = (d: Date) =>
             <p class="toc-desc">{post.data.description}</p>
           </div>
           <div class="toc-tags">
-            {post.data.tags.map((tag) => (
-              <a class="tag" href={`/tags/${tag}`}>{tag}</a>
+            {post.data.tags.map((t) => (
+              <a class="tag" href={`/tags/${t}`}>
+                {t}
+              </a>
             ))}
           </div>
         </li>
@@ -59,25 +82,6 @@ const formatDate = (d: Date) =>
     }
   </ol>
 </Base>
-
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-btn");
-  const items = document.querySelectorAll<HTMLElement>(".toc-item[data-tags]");
-
-  buttons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const tag = btn.dataset.tag;
-      buttons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      items.forEach((item) => {
-        const itemTags = (item.dataset.tags || "").split(",");
-        const show = tag === "*" || itemTags.includes(tag);
-        item.style.display = show ? "" : "none";
-      });
-    });
-  });
-</script>
 
 <style>
   .page-head {
@@ -113,12 +117,14 @@ const formatDate = (d: Date) =>
     border: 1px solid var(--border);
     border-radius: 2px;
     padding: 5px 13px;
+    text-decoration: none;
     transition: all 0.15s ease;
   }
 
   .tag-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
+    text-decoration: none;
   }
 
   .tag-btn.active {

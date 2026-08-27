@@ -27,13 +27,35 @@ import Base from "../layouts/Base.astro";
         如果你对我的内容感兴趣，欢迎通过页面底部的社交链接与我联系。
       </p>
 
-      <h2>技能</h2>
-      <ul class="skills">
-        <li><span class="skills-k">前端框架</span> Astro、React、Vue、Svelte</li>
-        <li><span class="skills-k">语言</span> TypeScript、JavaScript、HTML、CSS</li>
-        <li><span class="skills-k">工程化</span> Vite、pnpm、CI/CD、Monorepo</li>
-        <li><span class="skills-k">其他</span> Node.js、可视化、Web 性能优化</li>
-      </ul>
+       <h2>技能</h2>
+       <ul class="skills">
+         <li><span class="skills-k">前端框架</span> Astro、React、Vue、Svelte</li>
+         <li><span class="skills-k">语言</span> TypeScript、JavaScript、HTML、CSS</li>
+         <li><span class="skills-k">工程化</span> Vite、pnpm、CI/CD、Monorepo</li>
+         <li><span class="skills-k">其他</span> Node.js、可视化、Web 性能优化</li>
+       </ul>
+
+       <h2>关注领域</h2>
+       <div class="focus">
+         <article class="focus-col">
+           <h3>内容优先的站点</h3>
+           <p>
+             偏爱 Astro 这类默认零 JS、以内容为中心的框架。相信大多数个人站点与文档站，都不该背负一整套运行时。
+           </p>
+         </article>
+         <article class="focus-col">
+           <h3>克制的视觉系统</h3>
+           <p>
+             用留白、字阶与一条发丝线讲完故事。关注排版节奏与可读性，而不是堆砌装饰——这也是本站的「编辑杂志风」由来。
+           </p>
+         </article>
+         <article class="focus-col">
+           <h3>人机协作的工作流</h3>
+           <p>
+             把重复动作交给别名、脚本与智能体，让人专注在架构与判断上。正在整理一套可复用的命令行与 dotfiles 实践。
+           </p>
+         </article>
+       </div>
     </div>
   </article>
 </Base>
@@ -92,5 +114,29 @@ import Base from "../layouts/Base.astro";
     font-weight: 600;
     color: var(--accent);
     margin-bottom: 4px;
+  }
+
+  .focus {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
+    margin-top: 8px;
+  }
+
+  .focus-col {
+    border-top: 2px solid var(--accent);
+    padding-top: 14px;
+  }
+
+  .focus-col h3 {
+    font-size: 1.2rem;
+    margin: 0 0 8px;
+  }
+
+  .focus-col p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
   }
 </style>

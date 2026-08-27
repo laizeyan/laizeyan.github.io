@@ -5,30 +5,34 @@ const gear = [
   {
     group: "硬件",
     items: [
-      "笔记本：占位轻薄本，32GB 内存，日常开发主力",
-      "显示器：27 寸 4K，竖屏放文档与终端",
-      "键盘：客制化 65% 机械键盘，茶轴",
-      "鼠标：轻量无线鼠标",
-      "相机：一台入门无反，配 35mm 定焦",
+      { k: "CPU", v: "AMD Ryzen 7 7840U，8 核低功耗，静音优先" },
+      { k: "内存", v: "32GB LPDDR5，日常多开无压力" },
+      { k: "显示器", v: "27 寸 4K 主屏 + 竖屏副屏放文档与终端" },
+      { k: "键盘", v: "客制化 65% 机械键盘，茶轴，热插拔" },
+      { k: "鼠标", v: "轻量无线鼠标，约 58g" },
+      { k: "相机", v: "入门无反 + 35mm 定焦，扫街专用" },
     ],
   },
   {
     group: "软件",
     items: [
-      "系统：Arch Linux + Hyprland 平铺窗口管理",
-      "编辑器：Neovim / VS Code，配相同配色",
-      "终端：Ghostty + zsh + 极简提示符",
-      "浏览器：日常 Firefox，调试用 Chromium",
-      "笔记：纯文本 + Git 管理的知识库",
+      { k: "系统", v: "Arch Linux + Hyprland 平铺窗口管理" },
+      { k: "编辑器", v: "Neovim / VS Code，共用一套配色" },
+      { k: "终端", v: "Ghostty + zsh，极简提示符" },
+      { k: "字体", v: "正文字体霞鹜文楷，代码 JetBrains Mono" },
+      { k: "浏览器", v: "日常 Firefox，调试用 Chromium" },
+      { k: "笔记", v: "纯文本 + Git 管理的本地知识库" },
     ],
   },
   {
-    group: "开发工具",
+    group: "服务",
     items: [
-      "包管理：pnpm，项目级隔离",
-      "构建：Vite / Astro",
-      "设计：Figma 画草图与组件",
-      "同步：rclone 备份到本地 NAS",
+      { k: "托管", v: "GitHub Pages 上线个人站点" },
+      { k: "域名", v: "laizeyan.github.io（用户页）+ 自有域名）" },
+      { k: "备份", v: "rclone 同步到本地 NAS" },
+      { k: "搜索", v: "Pagefind 站内全文检索" },
+      { k: "CI", v: "GitHub Actions 自动构建与部署" },
+      { k: "订阅", v: "RSS 输出，零第三方追踪" },
     ],
   },
 ];
@@ -51,11 +55,14 @@ const gear = [
         gear.map((section) => (
           <section class="uses-group">
             <h2>{section.group}</h2>
-            <ul class="uses-list">
+            <div class="uses-grid">
               {section.items.map((item) => (
-                <li>{item}</li>
+                <div class="uses-card">
+                  <span class="uses-k">{item.k}</span>
+                  <span class="uses-v">{item.v}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
         ))
       }
@@ -79,30 +86,52 @@ const gear = [
   }
 
   .uses-group {
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
 
   .uses-group h2 {
     font-size: 1.5rem;
-    margin: 0 0 12px;
+    margin: 0 0 16px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border);
   }
 
-  .uses-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .uses-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
   }
 
-  .uses-list li {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
+  .uses-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 14px 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .uses-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(22, 20, 15, 0.08);
+  }
+
+  .uses-k {
+    font-family: var(--sans);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .uses-v {
     font-family: "Noto Serif SC", var(--serif);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.98rem;
+    line-height: 1.55;
+    color: var(--text);
   }
 </style>

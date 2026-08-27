@@ -1,0 +1,90 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="404 · 页面走丢了" description="页面未找到">
+  <section class="notfound reveal">
+    <p class="section-kicker">迷路了</p>
+    <h1 class="code">404</h1>
+    <p class="lead msg">
+      这一页大概被排版时夹进了另一期杂志——或者它从未存在过。
+    </p>
+    <p class="sub">
+      别担心，好内容都还安稳地躺在下面这些地方。
+    </p>
+    <div class="links">
+      <a class="nf-btn primary" href="/">回到首页</a>
+      <a class="nf-btn" href="/blog">读读博客</a>
+      <a class="nf-btn" href="/search">站内搜索</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound {
+    min-height: 56vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 64px 0;
+  }
+
+  .code {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(6rem, 22vw, 12rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    margin: 10px 0 16px;
+    color: var(--accent);
+  }
+
+  .msg {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .sub {
+    color: var(--text-muted);
+    margin: 12px 0 28px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .nf-btn {
+    font: inherit;
+    font-size: 0.92rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 9px 20px;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .nf-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+
+  .nf-btn.primary {
+    color: var(--accent-contrast);
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .nf-btn.primary:hover {
+    color: var(--accent-contrast);
+    filter: brightness(1.06);
+  }
+</style>
