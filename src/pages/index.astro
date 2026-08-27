@@ -13,14 +13,14 @@ const latestPosts = (await getCollection("blog", ({ data }) => !data.draft))
 const formatDate = (d: Date) => d.toLocaleDateString("zh-CN");
 ---
 
-<Base title="你的名字 · 个人站点" description="你的名字 · 一句话简介">
+<Base title="Ze'Yan · 个人站点" description="Ze'Yan · 一句话简介">
   <section class="intro">
-    <h1>你的名字</h1>
-    <p class="tagline">一句话简介占位：热爱构建产品与分享技术的前端工程师。</p>
+    <h1>Ze'Yan</h1>
+    <p class="tagline">热爱构建产品与分享技术的前端工程师。</p>
     <nav class="social" aria-label="社交链接">
-      <a href="#">GitHub</a>
+      <a href="https://github.com/laizeyan">GitHub</a>
       <a href="#">Twitter</a>
-      <a href="#">Email</a>
+      <a href="mailto:hi@laizeyan.me">Email</a>
     </nav>
   </section>
 

@@ -7,7 +7,7 @@ export async function GET(context: any) {
   );
 
   return rss({
-    title: "你的名字 · 博客",
+    title: "Ze'Yan · 博客",
     description: "技术文章与随笔",
     site: context.site,
     items: posts.map((p) => ({
