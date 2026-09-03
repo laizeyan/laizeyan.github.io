@@ -72,7 +72,7 @@ const formatDate = (d: Date) =>
 
       items.forEach((item) => {
         const itemTags = (item.dataset.tags || "").split(",");
-        const show = tag === "*" || itemTags.includes(tag);
+        const show = tag === "*" || (tag !== undefined && itemTags.includes(tag));
         item.style.display = show ? "" : "none";
       });
     });

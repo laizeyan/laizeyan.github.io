@@ -8,17 +8,27 @@ const description = "站内全文搜索";
 <Base title={title} description={description}>
   <h1>站内搜索</h1>
   <p class="search-hint">输入关键词检索全站内容（由 Pagefind 提供）。</p>
-  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-  <div id="search"></div>
-  <script src="/pagefind/pagefind-ui.js" is:inline></script>
-  <script is:inline>
-    new PagefindUI({ element: "#search", showSubResults: true });
-  </script>
+  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <pagefind-config base-url="/"></pagefind-config>
+  <pagefind-input></pagefind-input>
+  <pagefind-summary></pagefind-summary>
+  <pagefind-results></pagefind-results>
+  <script src="/pagefind/pagefind-component-ui.js" type="module"></script>
 </Base>
 
 <style>
   .search-hint {
     color: var(--text-muted);
     margin-bottom: 24px;
+  }
+
+  pagefind-input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  pagefind-results {
+    display: block;
+    margin-top: 16px;
   }
 </style>

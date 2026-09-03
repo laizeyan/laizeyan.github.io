@@ -17,19 +17,27 @@ const gear = [
     group: "软件",
     items: [
       { k: "系统", v: "Arch Linux + Hyprland 平铺窗口管理" },
-      { k: "编辑器", v: "Neovim / VS Code，共用一套配色" },
-      { k: "终端", v: "Ghostty + zsh，极简提示符" },
+      { k: "编辑器", v: "Neovim (LazyVim) + VS Code，共用一套配色" },
+      { k: "终端", v: "zsh + bash，多套终端配置（alacritty/foot/ghostty/kitty）" },
       { k: "字体", v: "正文字体霞鹜文楷，代码 JetBrains Mono" },
       { k: "浏览器", v: "日常 Firefox，调试用 Chromium" },
       { k: "笔记", v: "纯文本 + Git 管理的本地知识库" },
     ],
   },
   {
+    group: "AI 工具",
+    items: [
+      { k: "编码助手", v: "opencode + Codex + Claude Code，多 Agent 协作" },
+      { k: "智能体", v: "Hermes Agent 用于代码审查与长任务拆步" },
+      { k: "工具链", v: "mise 管理 Node/Go/Rust/Python 版本，统一环境" },
+      { k: "版本控制", v: "Git + GitHub SSH，gh CLI 管理 PR/Issue" },
+    ],
+  },
+  {
     group: "服务",
     items: [
-      { k: "托管", v: "GitHub Pages 上线个人站点" },
-      { k: "域名", v: "laizeyan.github.io（用户页）+ 自有域名）" },
-      { k: "备份", v: "rclone 同步到本地 NAS" },
+      { k: "托管", v: "GitHub Pages 部署个人站点" },
+      { k: "域名", v: "laizeyan.github.io（用户页）" },
       { k: "搜索", v: "Pagefind 站内全文检索" },
       { k: "CI", v: "GitHub Actions 自动构建与部署" },
       { k: "订阅", v: "RSS 输出，零第三方追踪" },

@@ -21,7 +21,7 @@ const prevPost = index > 0 ? allPosts[index - 1] : null;
 const nextPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
 
 const readingMinutes = (() => {
-  const raw = post.body
+  const raw = (post.body ?? "")
     .replace(/```[\s\S]*?```/g, "")
     .replace(/`[^`]*`/g, "")
     .replace(/[#>*_~\-]/g, "")
