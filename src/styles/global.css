@@ -270,6 +270,11 @@ img {
   border-radius: 4px;
 }
 
+/* 暗色模式下适度降低纯白图片亮度，避免刺眼、提升与背景的融合 */
+[data-theme="dark"] img {
+  filter: brightness(0.9) contrast(1.05);
+}
+
 /* ---- 视图过渡（fade，尊重 reduced-motion） ---- */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root),

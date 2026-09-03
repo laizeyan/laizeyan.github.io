@@ -1,0 +1,17 @@
+{
+  "name": "Ze'Yan · 个人站点",
+  "short_name": "Ze'Yan",
+  "description": "Ze'Yan 的个人站点，记录博客、项目与关于。AI 驱动的全栈工程师。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f3",
+  "theme_color": "#b4452e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
