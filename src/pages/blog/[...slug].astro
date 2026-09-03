@@ -38,6 +38,9 @@ const formatDate = (d: Date) =>
 ---
 
 <Base title={post.data.title} description={post.data.description}>
+  <div class="reading-progress" aria-hidden="true">
+    <div class="reading-progress-bar"></div>
+  </div>
   <article class="prose post reveal">
     <header class="post-header">
       <p class="section-kicker">文章</p>
@@ -88,7 +91,44 @@ const formatDate = (d: Date) =>
   </article>
 </Base>
 
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const bar = document.querySelector<HTMLElement>(
+      ".reading-progress-bar"
+    );
+    if (!bar) return;
+    const update = () => {
+      const scrollable = document.documentElement;
+      const total =
+        scrollable.scrollHeight - scrollable.clientHeight;
+      const ratio = total > 0 ? scrollable.scrollTop / total : 0;
+      bar.style.width = `${Math.min(100, Math.max(0, ratio * 100))}%`;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    // 文章加载/图片加载后可能改变高度，重新计算
+    window.addEventListener("resize", update);
+  });
+</script>
+
 <style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .reading-progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: var(--accent);
+    transition: width 0.1s linear;
+  }
+
   .post {
     padding: 40px 0;
   }

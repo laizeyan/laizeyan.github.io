@@ -1,0 +1,113 @@
+---
+import Base from "../layouts/Base.astro";
+
+// 在此添加友链：name 站点名 / url 链接 / desc 一句简介
+const friends: { name: string; url: string; desc: string }[] = [
+  // {
+  //   name: "xxx",
+  //   url: "https://example.com",
+  //   desc: "一句话描述",
+  // },
+];
+---
+
+<Base
+  title="友链 · Ze'Yan"
+  description="Ze'Yan 的友情链接"
+>
+  <article class="prose friends reveal">
+    <header class="friends-head">
+      <p class="section-kicker">友链</p>
+      <h1>友情链接</h1>
+      <p class="lead">
+        我欣赏并关注的一些站点。想做友链，欢迎通过页面底部的邮箱联系我。
+      </p>
+    </header>
+
+    <hr class="rule" />
+
+    {
+      friends.length > 0 ? (
+        <div class="friends-grid">
+          {
+            friends.map((f) => (
+              <a class="friend-card" href={f.url} target="_blank" rel="noopener noreferrer">
+                <span class="friend-name">{f.name}</span>
+                <span class="friend-desc">{f.desc}</span>
+              </a>
+            ))
+          }
+        </div>
+      ) : (
+        <p class="friends-empty">
+          友链整理中，敬请期待。
+        </p>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .friends {
+    padding: 40px 0;
+  }
+
+  .friends-head h1 {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    margin: 8px 0 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .friends-head .lead {
+    margin: 0;
+    max-width: 560px;
+  }
+
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .friend-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .friend-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .friend-name {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+
+  .friend-card:hover .friend-name {
+    color: var(--accent);
+  }
+
+  .friend-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .friends-empty {
+    margin-top: 40px;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+</style>
