@@ -26,17 +26,24 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:site_name" content="Ze'Yan · 个人站点" />
+    <meta property="og:locale" content="zh_CN" />
     <meta property="og:image" content={new URL("/og-image.png", Astro.url).href} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Ze'Yan · 个人站点" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@laizeyan" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL("/og-image.png", Astro.url).href} />
     <link rel="canonical" href={Astro.url.href} />
     <link rel="alternate" type="application/rss+xml" title="Ze'Yan · 博客" href="/rss.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#b4452e" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="robots" content="index, follow" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

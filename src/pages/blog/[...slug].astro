@@ -20,6 +20,25 @@ const index = allPosts.findIndex((p) => p.id === post.id);
 const prevPost = index > 0 ? allPosts[index - 1] : null;
 const nextPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
 
+// 相关文章：按共享标签加权（同标签越多越靠前），排除当前，取最近 3 篇
+const related = (() => {
+  const others = allPosts.filter((p) => p.id !== post.id);
+  const myTags = new Set(post.data.tags);
+  const scored = others
+    .map((p) => ({
+      post: p,
+      score: p.data.tags.filter((t) => myTags.has(t)).length,
+    }))
+    .filter((s) => s.score > 0)
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf();
+    })
+    .slice(0, 3)
+    .map((s) => s.post);
+  return scored;
+})();
+
 const readingMinutes = (() => {
   const raw = (post.body ?? "")
     .replace(/```[\s\S]*?```/g, "")
@@ -108,6 +127,36 @@ const updated =
         }
       </div>
     </nav>
+
+    {
+      related.length > 0 && (
+        <section class="related reveal" aria-label="相关文章">
+          <p class="section-kicker">继续阅读</p>
+          <h2 class="related-title">相关文章</h2>
+          <ul class="related-list">
+            {related.map((r) => (
+              <li>
+                <a href={`/blog/${r.id}`} class="related-link">
+                  <span class="related-meta">
+                    {formatDate(r.data.pubDate)}
+                    {r.data.tags.length > 0 && (
+                      <span class="related-tags">
+                        {r.data.tags
+                          .filter((t) => post.data.tags.includes(t))
+                          .slice(0, 2)
+                          .map((t) => `#${t}`)
+                          .join(" ")}
+                      </span>
+                    )}
+                  </span>
+                  <span class="related-post-title">{r.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </article>
 </Base>
 
@@ -413,5 +462,74 @@ const updated =
 
   .post-body :global(a:hover) {
     background-size: 100% 2px;
+  }
+
+  /* ---- 相关文章 ---- */
+  .related {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .related-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    margin: 4px 0 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .related-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .related-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 0;
+    text-decoration: none;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: color var(--t-base) ease;
+  }
+
+  .related-list li:last-child .related-link {
+    border-bottom: none;
+  }
+
+  .related-link:hover .related-post-title {
+    color: var(--accent);
+  }
+
+  .related-meta {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .related-tags {
+    color: var(--accent);
+  }
+
+  .related-post-title {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    transition: color var(--t-base) ease;
+  }
+
+  @media (max-width: 640px) {
+    .related {
+      margin-top: 36px;
+    }
   }
 </style>

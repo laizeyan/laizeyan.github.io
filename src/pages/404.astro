@@ -1,5 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const recent = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 ---
 
 <Base title="404 · 页面走丢了" description="页面未找到">
@@ -17,6 +29,24 @@ import Base from "../layouts/Base.astro";
       <a class="nf-btn" href="/blog">读读博客</a>
       <a class="nf-btn" href="/search">站内搜索</a>
     </div>
+
+    {
+      recent.length > 0 && (
+        <div class="recent">
+          <p class="recent-label">近期文章</p>
+          <ul class="recent-list">
+            {recent.map((p) => (
+              <li>
+                <a href={`/blog/${p.id}`}>
+                  <span class="recent-date">{formatDate(p.data.pubDate)}</span>
+                  <span class="recent-title">{p.data.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
   </section>
 </Base>
 
@@ -91,5 +121,63 @@ import Base from "../layouts/Base.astro";
   .nf-btn.primary:hover {
     color: var(--accent-contrast);
     filter: brightness(1.06);
+  }
+
+  .recent {
+    margin-top: 40px;
+    padding-top: 24px;
+    width: 100%;
+    max-width: 560px;
+    border-top: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .recent-label {
+    margin: 0 0 12px;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .recent-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .recent-list li a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: color var(--t-base) ease;
+  }
+
+  .recent-list li:last-child a {
+    border-bottom: none;
+  }
+
+  .recent-list li a:hover .recent-title {
+    color: var(--accent);
+  }
+
+  .recent-date {
+    flex-shrink: 0;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+
+  .recent-title {
+    font-family: var(--serif);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    transition: color var(--t-base) ease;
   }
 </style>
