@@ -21,6 +21,7 @@ const hasLink = Boolean(project.data.url || project.data.repo);
 <Base title={project.data.title} description={project.data.description}>
   <article class="prose project reveal">
     <header class="project-header">
+      <div class="project-header-accent" aria-hidden="true"></div>
       <p class="section-kicker">项目</p>
       <h1>{project.data.title}</h1>
       <div class="project-meta">
@@ -60,10 +61,26 @@ const hasLink = Boolean(project.data.url || project.data.repo);
     padding: 40px 0;
   }
 
+  .project-header {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .project-header-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
   .project-header h1 {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
     margin: 8px 0 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
   }
 
   .project-meta {

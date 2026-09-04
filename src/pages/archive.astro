@@ -34,28 +34,27 @@ const formatDate = (d: Date) =>
   <hr class="rule" />
 
   {
-    years.map((year) => (
+    years.map((year, yi) => (
       <section class="archive-year reveal">
         <h2 class="archive-year-title">
           <span class="year-num">{year}</span>
           <span class="year-count">{byYear.get(year)!.length} 篇</span>
         </h2>
         <ol class="archive-list">
-          {
-            byYear.get(year)!.map((post) => (
-              <li class="archive-item">
-                <time class="archive-date">{formatDate(post.data.pubDate)}</time>
-                <a class="archive-title" href={`/blog/${post.id}`}>
-                  {post.data.title}
-                </a>
-                <div class="archive-tags">
-                  {post.data.tags.map((tag) => (
-                    <a class="tag" href={`/tags/${tag}`}>{tag}</a>
-                  ))}
-                </div>
-              </li>
-            ))
-          }
+          {byYear.get(year)!.map((post, i) => (
+            <li class="archive-item">
+              <span class="archive-idx" aria-hidden="true">{String(yi * 10 + i + 1).padStart(2, "0")}</span>
+              <time class="archive-date">{formatDate(post.data.pubDate)}</time>
+              <a class="archive-title" href={`/blog/${post.id}`}>
+                {post.data.title}
+              </a>
+              <div class="archive-tags">
+                {post.data.tags.map((tag) => (
+                  <a class="tag" href={`/tags/${tag}`}>{tag}</a>
+                ))}
+              </div>
+            </li>
+          ))}
         </ol>
       </section>
     ))
@@ -63,24 +62,8 @@ const formatDate = (d: Date) =>
 </Base>
 
 <style>
-  .page-head {
-    padding: 40px 0 20px;
-  }
-
-  .page-head h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.5rem, 7vw, 4rem);
-    margin: 6px 0 12px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-lead {
-    margin: 0;
-    max-width: 560px;
-  }
-
   .archive-year {
-    margin-top: 36px;
+    margin-top: 44px;
   }
 
   .archive-year-title {
@@ -89,15 +72,17 @@ const formatDate = (d: Date) =>
     gap: 14px;
     margin: 0 0 8px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--text);
+    position: relative;
   }
 
   .year-num {
     font-family: var(--serif);
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     color: var(--accent);
+    line-height: 1;
   }
 
   .year-count {
@@ -106,6 +91,8 @@ const formatDate = (d: Date) =>
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted);
+    border-left: 1px solid var(--border);
+    padding-left: 10px;
   }
 
   .archive-list {
@@ -116,15 +103,21 @@ const formatDate = (d: Date) =>
 
   .archive-item {
     display: grid;
-    grid-template-columns: 90px 1fr auto;
-    gap: 20px;
+    grid-template-columns: 28px 90px 1fr auto;
+    gap: 12px;
     align-items: baseline;
     padding: 14px 0;
     border-bottom: 1px solid var(--border);
+    position: relative;
   }
 
-  .archive-item:last-child {
-    border-bottom: none;
+  .archive-idx {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--border);
+    letter-spacing: -0.02em;
+    user-select: none;
   }
 
   .archive-date {
@@ -144,6 +137,7 @@ const formatDate = (d: Date) =>
 
   .archive-title:hover {
     color: var(--accent);
+    text-decoration: none;
   }
 
   .archive-tags {
@@ -165,6 +159,10 @@ const formatDate = (d: Date) =>
     .archive-item {
       grid-template-columns: 1fr;
       gap: 6px;
+    }
+
+    .archive-idx {
+      display: none;
     }
 
     .archive-tags {

@@ -16,6 +16,11 @@ const formatDate = (d: Date) =>
     month: "2-digit",
     day: "2-digit",
   });
+
+const issueDate = new Date().toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+});
 ---
 
 <Base
@@ -23,8 +28,17 @@ const formatDate = (d: Date) =>
   description="Ze'Yan · AI 驱动的全栈工程师，关注智能体工作流、Linux 与 Web 开发"
 >
   <section class="cover reveal" style="--reveal-delay: 0ms">
+    <div class="cover-top-rule" aria-hidden="true"></div>
+    <div class="cover-meta">
+      <span class="cover-meta-item">Vol. I</span>
+      <span class="cover-meta-sep" aria-hidden="true">·</span>
+      <span class="cover-meta-item">{issueDate}</span>
+      <span class="cover-meta-sep" aria-hidden="true">·</span>
+      <span class="cover-meta-item">No. 001</span>
+    </div>
     <p class="cover-kicker">个人站点 · PORTFOLIO & WRITING</p>
     <h1 class="cover-title">Ze'Yan</h1>
+    <div class="cover-title-rule" aria-hidden="true"></div>
     <p class="lead cover-lead">
       AI 驱动的全栈工程师。这里汇集我的项目、文章与一些慢思考——像一本持续排印的杂志。
     </p>
@@ -44,15 +58,18 @@ const formatDate = (d: Date) =>
     <div class="feature-grid">
       {
         featuredProjects.map((project, i) => (
-          <a
+          <article
             class:list={["feature-card", "card", { wide: i % 3 === 0 }]}
-            href={`/projects/${project.data.slug ?? project.id}`}
           >
             <span class="feature-letter" aria-hidden="true">
               {project.data.title.charAt(0)}
             </span>
             <div class="feature-body">
-              <h3>{project.data.title}</h3>
+              <h3>
+                <a href={`/projects/${project.data.slug ?? project.id}`}>
+                  {project.data.title}
+                </a>
+              </h3>
               <p>{project.data.description}</p>
               <div class="tags">
                 {project.data.tags.map((tag) => (
@@ -60,7 +77,7 @@ const formatDate = (d: Date) =>
                 ))}
               </div>
             </div>
-          </a>
+          </article>
         ))
       }
     </div>
@@ -77,8 +94,9 @@ const formatDate = (d: Date) =>
 
     <ol class="toc">
       {
-        latestPosts.map((post) => (
+        latestPosts.map((post, i) => (
           <li class="toc-item">
+            <span class="toc-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
             <time class="toc-date">{formatDate(post.data.pubDate)}</time>
             <div class="toc-main">
               <a class="toc-title" href={`/blog/${post.id}`}>
@@ -99,8 +117,38 @@ const formatDate = (d: Date) =>
 </Base>
 
 <style>
+  /* ============================================================
+     COVER — MAGAZINE COVER TREATMENT
+     ============================================================ */
   .cover {
-    padding: 64px 0 36px;
+    padding: 48px 0 36px;
+  }
+
+  .cover-top-rule {
+    height: 4px;
+    background: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .cover-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .cover-meta-item {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+
+  .cover-meta-sep {
+    color: var(--border);
+    font-size: 0.9rem;
   }
 
   .cover-kicker {
@@ -110,28 +158,40 @@ const formatDate = (d: Date) =>
     font-size: 0.74rem;
     font-weight: 600;
     color: var(--accent);
-    margin: 0 0 16px;
+    margin: 0 0 12px;
   }
 
   .cover-title {
     font-family: var(--serif);
     font-weight: 700;
-    font-size: clamp(3.5rem, 12vw, 7rem);
-    line-height: 0.95;
-    letter-spacing: -0.03em;
-    margin: 0 0 24px;
+    font-size: clamp(4rem, 14vw, 8.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.04em;
+    margin: 0 0 16px;
+    color: var(--text);
+  }
+
+  .cover-title-rule {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    margin-bottom: 20px;
+    max-width: 200px;
   }
 
   .cover-lead {
     max-width: 640px;
     margin: 0;
+    font-size: 1.4rem;
+    line-height: 1.55;
   }
 
+  /* ============================================================
+     SECTION & FEATURE GRID
+     ============================================================ */
   .section {
     margin-top: 64px;
   }
 
-  /* ---- 非对称项目网格 ---- */
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -148,6 +208,7 @@ const formatDate = (d: Date) =>
     grid-column: 1 / -1;
   }
 
+  /* 杂志大写首字母 — 有装饰层次 */
   .feature-letter {
     flex: none;
     width: 56px;
@@ -161,63 +222,40 @@ const formatDate = (d: Date) =>
     color: var(--accent-contrast);
     background-color: var(--accent);
     border-radius: 4px;
+    position: relative;
+  }
+
+  .feature-letter::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border: 1px solid color-mix(in srgb, var(--accent-contrast) 25%, transparent);
+    border-radius: 2px;
+    pointer-events: none;
   }
 
   .feature-body {
     min-width: 0;
   }
 
-  /* ---- 目录式列表 ---- */
-  .toc {
-    list-style: none;
+  .feature-body h3 {
     margin: 0;
-    padding: 0;
   }
 
-  .toc-item {
-    display: grid;
-    grid-template-columns: 110px 1fr auto;
-    gap: 20px;
-    align-items: baseline;
-    padding: 18px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .toc-item:last-child {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .toc-date {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .toc-title {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: 1.25rem;
+  .feature-body h3 a {
     color: var(--text);
     text-decoration: none;
     transition: color var(--t-base) ease;
   }
 
-  .toc-title:hover {
+  .feature-body h3 a:hover {
     color: var(--accent);
   }
 
-  .toc-desc {
+  .feature-body p {
     margin: 6px 0 0;
     color: var(--text-muted);
     font-size: 0.92rem;
-  }
-
-  .toc-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-content: start;
-    justify-content: flex-end;
   }
 
   @media (max-width: 900px) {
@@ -227,17 +265,12 @@ const formatDate = (d: Date) =>
   }
 
   @media (max-width: 720px) {
+    .cover-title {
+      font-size: clamp(3rem, 12vw, 5rem);
+    }
+
     .feature-grid {
       grid-template-columns: 1fr;
-    }
-
-    .toc-item {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .toc-tags {
-      justify-content: flex-start;
     }
   }
 </style>

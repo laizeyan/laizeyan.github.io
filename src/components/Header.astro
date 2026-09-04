@@ -13,18 +13,28 @@ const nav = [
 ];
 
 const current = Astro.url.pathname;
+
+const issueDate = new Date().toLocaleDateString("zh-CN", {
+  year: "numeric",
+  month: "long",
+});
 ---
 
 <header class="masthead-wrap">
+  <div class="masthead-accent-bar" aria-hidden="true"></div>
   <div class="page-container">
     <div class="masthead-top">
       <a href="/" class="masthead-name">Ze'Yan</a>
       <div class="masthead-tools">
+        <span class="masthead-issue">{issueDate}</span>
         <a href="/search" class="masthead-search" aria-label="搜索">搜索</a>
         <ThemeToggle />
       </div>
     </div>
-    <hr class="rule" />
+    <div class="masthead-rule" aria-hidden="true">
+      <span class="rule-line rule-thick"></span>
+      <span class="rule-line rule-thin"></span>
+    </div>
     <nav class="masthead-nav" aria-label="主导航">
       {
         nav.map((item) => (
@@ -53,18 +63,24 @@ const current = Astro.url.pathname;
     border-bottom: 1px solid var(--border);
   }
 
+  /* 顶部赭石红细条纹 */
+  .masthead-accent-bar {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 60%, var(--accent-2) 100%);
+  }
+
   .masthead-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 0 10px;
+    padding: 16px 0 10px;
   }
 
   .masthead-name {
     font-family: var(--serif);
     font-weight: 700;
-    font-size: 2rem;
-    letter-spacing: -0.02em;
+    font-size: 2.4rem;
+    letter-spacing: -0.03em;
     color: var(--text);
     text-decoration: none;
     line-height: 1;
@@ -86,6 +102,16 @@ const current = Astro.url.pathname;
     gap: 14px;
   }
 
+  .masthead-issue {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+  }
+
   .masthead-search {
     color: var(--text-muted);
     font-size: 0.82rem;
@@ -97,6 +123,28 @@ const current = Astro.url.pathname;
 
   .masthead-search:hover {
     color: var(--accent);
+  }
+
+  /* 报刊双线规则 */
+  .masthead-rule {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .rule-line {
+    display: block;
+    width: 100%;
+  }
+
+  .rule-thick {
+    height: 2px;
+    background-color: var(--text);
+  }
+
+  .rule-thin {
+    height: 1px;
+    background-color: var(--border);
   }
 
   .masthead-nav {
@@ -148,7 +196,11 @@ const current = Astro.url.pathname;
 
   @media (max-width: 640px) {
     .masthead-name {
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+    }
+
+    .masthead-issue {
+      display: none;
     }
 
     .masthead-nav {

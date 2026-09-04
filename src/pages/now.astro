@@ -5,6 +5,7 @@ import Base from "../layouts/Base.astro";
 <Base title="近况 · Ze'Yan" description="Ze'Yan 的近况（Now 页）">
   <article class="prose now reveal">
     <header class="now-head">
+      <div class="now-head-accent" aria-hidden="true"></div>
       <p class="section-kicker">近况</p>
       <h1>Now</h1>
       <p class="lead">这一阵子在忙些什么——更新于 2026 年 9 月。</p>
@@ -45,10 +46,26 @@ import Base from "../layouts/Base.astro";
     padding: 40px 0;
   }
 
+  .now-head {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .now-head-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
   .now-head h1 {
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(3rem, 8vw, 5rem);
     margin: 8px 0 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 
   .now-body {
@@ -67,12 +84,14 @@ import Base from "../layouts/Base.astro";
     list-style: none;
     margin: 0 0 1.4em;
     padding: 0;
+    counter-reset: now-counter;
   }
 
   .now-list li {
     position: relative;
-    padding: 12px 0 12px 28px;
+    padding: 14px 0 14px 36px;
     border-top: 1px solid var(--border);
+    counter-increment: now-counter;
   }
 
   .now-list li:last-child {
@@ -83,9 +102,29 @@ import Base from "../layouts/Base.astro";
     content: "§";
     position: absolute;
     left: 0;
-    top: 12px;
+    top: 14px;
     color: var(--accent);
     font-family: var(--serif);
     font-weight: 700;
+    font-size: 1.1rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 编号装饰 */
+  .now-list li::after {
+    content: counter(now-counter, decimal-leading-zero);
+    position: absolute;
+    right: 0;
+    top: 14px;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--border);
+    user-select: none;
+    letter-spacing: -0.02em;
   }
 </style>

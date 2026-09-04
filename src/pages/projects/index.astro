@@ -30,8 +30,9 @@ const formatDate = (d: Date) =>
 
   <div class="grid reveal">
     {
-      projects.map((project) => (
+      projects.map((project, i) => (
         <article class="card project-card">
+          <span class="project-ghost-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
           <span class="project-letter" aria-hidden="true">
             {project.data.title.charAt(0)}
           </span>
@@ -78,22 +79,6 @@ const formatDate = (d: Date) =>
 </Base>
 
 <style>
-  .page-head {
-    padding: 40px 0 20px;
-  }
-
-  .page-head h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.5rem, 7vw, 4rem);
-    margin: 6px 0 12px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-lead {
-    margin: 0;
-    max-width: 560px;
-  }
-
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -104,21 +89,50 @@ const formatDate = (d: Date) =>
   .project-card {
     display: flex;
     flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 幽灵索引 — 大号半透明编号 */
+  .project-ghost-idx {
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--border);
+    opacity: 0.5;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.03em;
   }
 
   .project-letter {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--serif);
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: var(--accent-contrast);
     background-color: var(--accent);
     border-radius: 4px;
     margin-bottom: 16px;
+    position: relative;
+  }
+
+  /* 内框装饰线 */
+  .project-letter::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border: 1px solid color-mix(in srgb, var(--accent-contrast) 25%, transparent);
+    border-radius: 2px;
+    pointer-events: none;
   }
 
   .project-card-body {
@@ -152,12 +166,15 @@ const formatDate = (d: Date) =>
     justify-content: space-between;
     gap: 12px;
     margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
   }
 
   .project-date {
-    color: var(--text-muted);
+    color: var(--accent-2);
     font-size: 0.8rem;
     font-variant-numeric: tabular-nums;
+    font-weight: 600;
   }
 
   .card-actions {

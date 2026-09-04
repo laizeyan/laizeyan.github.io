@@ -16,8 +16,10 @@ const formatDate = (d: Date) =>
 
 <Base title="404 · 页面走丢了" description="页面未找到">
   <section class="notfound reveal">
+    <div class="notfound-top-rule" aria-hidden="true"></div>
     <p class="section-kicker">迷路了</p>
     <h1 class="code">404</h1>
+    <div class="notfound-title-rule" aria-hidden="true"></div>
     <p class="lead msg">
       这一页大概被排版时夹进了另一期杂志——或者它从未存在过。
     </p>
@@ -35,9 +37,10 @@ const formatDate = (d: Date) =>
         <div class="recent">
           <p class="recent-label">近期文章</p>
           <ul class="recent-list">
-            {recent.map((p) => (
+            {recent.map((p, i) => (
               <li>
                 <a href={`/blog/${p.id}`}>
+                  <span class="recent-idx">{String(i + 1).padStart(2, "0")}</span>
                   <span class="recent-date">{formatDate(p.data.pubDate)}</span>
                   <span class="recent-title">{p.data.title}</span>
                 </a>
@@ -61,14 +64,29 @@ const formatDate = (d: Date) =>
     padding: 64px 0;
   }
 
+  .notfound-top-rule {
+    height: 4px;
+    background: var(--text);
+    width: 100%;
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+
   .code {
     font-family: var(--serif);
     font-weight: 700;
     font-size: clamp(6rem, 22vw, 12rem);
-    line-height: 0.9;
+    line-height: 0.85;
     letter-spacing: -0.04em;
-    margin: 10px 0 16px;
+    margin: 10px 0 12px;
     color: var(--accent);
+  }
+
+  .notfound-title-rule {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    margin-bottom: 20px;
+    max-width: 120px;
   }
 
   .msg {
@@ -128,7 +146,7 @@ const formatDate = (d: Date) =>
     padding-top: 24px;
     width: 100%;
     max-width: 560px;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--text);
     text-align: left;
   }
 
@@ -138,7 +156,8 @@ const formatDate = (d: Date) =>
     font-size: 0.75rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-2);
+    font-weight: 600;
   }
 
   .recent-list {
@@ -150,7 +169,7 @@ const formatDate = (d: Date) =>
   .recent-list li a {
     display: flex;
     align-items: baseline;
-    gap: 12px;
+    gap: 10px;
     padding: 10px 0;
     color: var(--text);
     text-decoration: none;
@@ -164,6 +183,14 @@ const formatDate = (d: Date) =>
 
   .recent-list li a:hover .recent-title {
     color: var(--accent);
+  }
+
+  .recent-idx {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--border);
+    min-width: 20px;
   }
 
   .recent-date {

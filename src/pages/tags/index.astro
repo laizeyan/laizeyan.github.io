@@ -24,7 +24,7 @@ const countFor = (tag: string) =>
     {
       allTags.map((tag) => (
         <a class="tag-chip" href={`/tags/${tag}`}>
-          <span>#{tag}</span>
+          <span class="tag-chip-name">#{tag}</span>
           <span class="tag-count">{countFor(tag)}</span>
         </a>
       ))
@@ -33,22 +33,6 @@ const countFor = (tag: string) =>
 </Base>
 
 <style>
-  .page-head {
-    padding: 40px 0 20px;
-  }
-
-  .page-head h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.5rem, 7vw, 4rem);
-    margin: 6px 0 12px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-lead {
-    margin: 0;
-    max-width: 560px;
-  }
-
   .tag-cloud {
     display: flex;
     flex-wrap: wrap;
@@ -59,23 +43,25 @@ const countFor = (tag: string) =>
   .tag-chip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-family: var(--serif);
     font-size: 1.1rem;
     color: var(--text);
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: 2px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     text-decoration: none;
+    box-shadow: var(--shadow-sm);
     transition: color var(--t-base) ease, border-color var(--t-base) ease,
-      transform var(--t-base) ease;
+      transform var(--t-base) ease, box-shadow var(--t-base) ease;
   }
 
   .tag-chip:hover {
     color: var(--accent);
     border-color: var(--accent);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
     text-decoration: none;
   }
 
@@ -83,11 +69,22 @@ const countFor = (tag: string) =>
     transform: scale(0.98);
   }
 
+  .tag-chip-name {
+    font-weight: 600;
+  }
+
   .tag-count {
     font-family: var(--sans);
     font-size: 0.78rem;
     color: var(--text-muted);
     border-left: 1px solid var(--border);
-    padding-left: 8px;
+    padding-left: 10px;
+    min-width: 18px;
+    text-align: center;
+    background-color: var(--accent-2);
+    color: var(--accent-2-contrast);
+    border-radius: 2px;
+    padding: 1px 6px;
+    border-left: none;
   }
 </style>

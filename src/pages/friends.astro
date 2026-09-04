@@ -17,6 +17,7 @@ const friends: { name: string; url: string; desc: string }[] = [
 >
   <article class="prose friends reveal">
     <header class="friends-head">
+      <div class="friends-head-accent" aria-hidden="true"></div>
       <p class="section-kicker">友链</p>
       <h1>友情链接</h1>
       <p class="lead">
@@ -70,10 +71,26 @@ const friends: { name: string; url: string; desc: string }[] = [
     padding: 40px 0;
   }
 
+  .friends-head {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .friends-head-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
   .friends-head h1 {
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(2.8rem, 8vw, 4.5rem);
     margin: 8px 0 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1;
   }
 
   .friends-head .lead {
@@ -98,12 +115,15 @@ const friends: { name: string; url: string; desc: string }[] = [
     border-left: 3px solid var(--accent);
     border-radius: 4px;
     text-decoration: none;
-    transition: border-color var(--t-base) ease, transform var(--t-base) ease;
+    box-shadow: var(--shadow-sm);
+    transition: border-color var(--t-base) ease, transform var(--t-base) ease,
+      box-shadow var(--t-base) ease;
   }
 
   .friend-card:hover {
     border-color: var(--accent);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
   }
 
   .friend-card:active {
@@ -127,28 +147,42 @@ const friends: { name: string; url: string; desc: string }[] = [
     line-height: 1.6;
   }
 
+  /* 空态 */
   .friends-empty {
     margin-top: 40px;
-    padding: 48px 24px;
+    padding: 56px 28px;
     text-align: center;
     background-color: var(--bg-elevated);
-    border: 1px dashed var(--border);
+    border: 2px dashed var(--border);
     border-radius: 4px;
+    position: relative;
+  }
+
+  .friends-empty::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 0 0 2px 2px;
   }
 
   .friends-empty-mark {
     display: block;
     font-family: var(--serif);
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-weight: 700;
     color: var(--accent);
     margin-bottom: 12px;
+    line-height: 1;
   }
 
   .friends-empty-title {
     margin: 0 0 8px;
     font-family: var(--serif);
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--text);
   }
 
@@ -160,13 +194,15 @@ const friends: { name: string; url: string; desc: string }[] = [
     max-width: 420px;
   }
 
+  /* 申请友链 */
   .friends-how {
     margin-top: 48px;
     padding: 24px 28px;
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
+    border-left: 3px solid var(--accent-2);
     border-radius: 4px;
+    box-shadow: var(--shadow-sm);
   }
 
   .friends-how h2 {
@@ -194,14 +230,14 @@ const friends: { name: string; url: string; desc: string }[] = [
 
   .friends-rules li {
     position: relative;
-    padding-left: 20px;
+    padding-left: 24px;
   }
 
   .friends-rules li::before {
     content: "§";
     position: absolute;
     left: 0;
-    color: var(--accent);
+    color: var(--accent-2);
     font-family: var(--serif);
     font-weight: 700;
   }

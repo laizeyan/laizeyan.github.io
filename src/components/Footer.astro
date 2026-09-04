@@ -32,6 +32,7 @@ const columns = [
 ---
 
 <footer class="site-footer">
+  <div class="footer-accent-bar" aria-hidden="true"></div>
   <div class="page-container footer-inner">
     <div class="footer-brand">
       <a href="/" class="footer-name">Ze'Yan</a>
@@ -63,9 +64,13 @@ const columns = [
 <style>
   .site-footer {
     margin-top: 80px;
-    border-top: 1px solid var(--border);
     background-color: var(--bg-elevated);
-    padding: 48px 0 28px;
+    padding: 0 0 28px;
+  }
+
+  .footer-accent-bar {
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
   }
 
   .footer-inner {
@@ -73,14 +78,16 @@ const columns = [
     flex-wrap: wrap;
     gap: 40px;
     justify-content: space-between;
+    padding-top: 48px;
   }
 
   .footer-name {
     font-family: var(--serif);
     font-weight: 700;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: var(--text);
     text-decoration: none;
+    letter-spacing: -0.02em;
     transition: color var(--t-base) ease;
   }
 
@@ -107,8 +114,10 @@ const columns = [
     letter-spacing: 0.16em;
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--accent-2);
     margin: 0 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
   }
 
   .footer-col ul {
@@ -138,10 +147,15 @@ const columns = [
     gap: 8px;
     margin-top: 36px;
     padding-top: 18px;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--text);
     color: var(--text-muted);
     font-size: 0.82rem;
     letter-spacing: 0.04em;
+  }
+
+  .footer-note {
+    color: var(--accent-2);
+    font-weight: 600;
   }
 
   @media (max-width: 640px) {

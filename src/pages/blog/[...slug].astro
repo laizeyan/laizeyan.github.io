@@ -71,6 +71,7 @@ const updated =
   </div>
   <article class="prose post reveal">
     <header class="post-header">
+      <div class="post-header-accent" aria-hidden="true"></div>
       <p class="section-kicker">文章</p>
       <h1>{post.data.title}</h1>
       <div class="post-meta">
@@ -253,7 +254,7 @@ const updated =
   .reading-progress-bar {
     height: 100%;
     width: 0;
-    background-color: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
     transition: width 0.1s linear;
   }
 
@@ -264,8 +265,9 @@ const updated =
     padding: 20px 24px;
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
+    border-left: 3px solid var(--accent-2);
     border-radius: 4px;
+    box-shadow: var(--shadow-sm);
   }
 
   .toc-label {
@@ -274,7 +276,8 @@ const updated =
     font-size: 0.75rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-2);
+    font-weight: 600;
   }
 
   .toc-list {
@@ -321,10 +324,26 @@ const updated =
     padding: 40px 0;
   }
 
+  .post-header {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .post-header-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
   .post-header h1 {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
     margin: 8px 0 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
   }
 
   .post-meta {
@@ -353,6 +372,7 @@ const updated =
     position: relative;
     padding-left: 12px;
     font-style: italic;
+    color: var(--accent-2);
   }
 
   .updated-time::before {
@@ -383,7 +403,7 @@ const updated =
     gap: 24px;
     margin-top: 48px;
     padding-top: 28px;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--text);
   }
 
   .post-nav-item.next {
@@ -407,7 +427,8 @@ const updated =
     font-size: 0.78rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--accent-2);
+    font-weight: 600;
   }
 
   .post-nav-title {
@@ -468,7 +489,7 @@ const updated =
   .related {
     margin-top: 48px;
     padding-top: 32px;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--text);
   }
 
   .related-title {
@@ -517,7 +538,7 @@ const updated =
   }
 
   .related-tags {
-    color: var(--accent);
+    color: var(--accent-2);
   }
 
   .related-post-title {

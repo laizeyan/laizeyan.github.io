@@ -49,6 +49,7 @@ const gear = [
 <Base title="装备 · Ze'Yan" description="Ze'Yan 使用的工具与装备（Uses 页）">
   <article class="prose uses reveal">
     <header class="uses-head">
+      <div class="uses-head-accent" aria-hidden="true"></div>
       <p class="section-kicker">装备</p>
       <h1>Uses</h1>
       <p class="lead">
@@ -60,9 +61,12 @@ const gear = [
 
     <div class="uses-body">
       {
-        gear.map((section) => (
+        gear.map((section, si) => (
           <section class="uses-group">
-            <h2>{section.group}</h2>
+            <h2 class="uses-group-title">
+              <span class="uses-group-idx" aria-hidden="true">{String(si + 1).padStart(2, "0")}</span>
+              {section.group}
+            </h2>
             <div class="uses-grid">
               {section.items.map((item) => (
                 <div class="uses-card">
@@ -83,10 +87,26 @@ const gear = [
     padding: 40px 0;
   }
 
+  .uses-head {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .uses-head-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
   .uses-head h1 {
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(3rem, 8vw, 5rem);
     margin: 8px 0 16px;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 
   .uses-body {
@@ -94,14 +114,29 @@ const gear = [
   }
 
   .uses-group {
-    margin-bottom: 36px;
+    margin-bottom: 40px;
   }
 
-  .uses-group h2 {
+  .uses-group-title {
     font-size: 1.5rem;
     margin: 0 0 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .uses-group-idx {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    font-weight: 600;
+    border: 1px solid var(--accent-2);
+    border-radius: 2px;
+    padding: 2px 8px;
   }
 
   .uses-grid {
@@ -119,12 +154,15 @@ const gear = [
     border-left: 3px solid var(--accent);
     border-radius: 4px;
     padding: 14px 16px;
-    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease,
+      border-left-color var(--t-base) ease;
   }
 
   .uses-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(22, 20, 15, 0.08);
+    box-shadow: var(--shadow-lg);
+    border-left-color: var(--accent-2);
   }
 
   .uses-k {

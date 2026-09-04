@@ -61,8 +61,9 @@ const formatDate = (d: Date) =>
 
   <ol class="toc reveal">
     {
-      tagged.map((post) => (
+      tagged.map((post, i) => (
         <li class="toc-item" data-tags={post.data.tags.join(",")}>
+          <span class="toc-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
           <time class="toc-date">{formatDate(post.data.pubDate)}</time>
           <div class="toc-main">
             <a class="toc-title" href={`/blog/${post.id}`}>
@@ -84,128 +85,5 @@ const formatDate = (d: Date) =>
 </Base>
 
 <style>
-  .page-head {
-    padding: 40px 0 20px;
-  }
-
-  .page-head h1 {
-    font-family: var(--serif);
-    font-size: clamp(2.5rem, 7vw, 4rem);
-    margin: 6px 0 12px;
-    letter-spacing: -0.02em;
-  }
-
-  .page-lead {
-    margin: 0;
-    max-width: 560px;
-  }
-
-  .tag-filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 24px 0;
-  }
-
-  .tag-btn {
-    cursor: pointer;
-    font: inherit;
-    font-size: 0.82rem;
-    letter-spacing: 0.04em;
-    color: var(--text-muted);
-    background-color: transparent;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 5px 13px;
-    text-decoration: none;
-    transition: color var(--t-base) ease, border-color var(--t-base) ease,
-      background-color var(--t-base) ease, transform var(--t-base) ease;
-  }
-
-  .tag-btn:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-    text-decoration: none;
-  }
-
-  .tag-btn:active {
-    transform: scale(0.96);
-  }
-
-  .tag-btn.active {
-    color: var(--accent-contrast);
-    background-color: var(--accent);
-    border-color: var(--accent);
-  }
-
-  .toc {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .toc-item {
-    display: grid;
-    grid-template-columns: 110px 1fr auto;
-    gap: 20px;
-    align-items: baseline;
-    padding: 20px 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .toc-item:last-child {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .toc-date {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .toc-title {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: 1.3rem;
-    color: var(--text);
-    text-decoration: none;
-    transition: color var(--t-base) ease;
-  }
-
-  .toc-title:hover {
-    color: var(--accent);
-  }
-
-  .toc-desc {
-    margin: 6px 0 0;
-    color: var(--text-muted);
-    font-size: 0.92rem;
-  }
-
-  .toc-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-content: start;
-    justify-content: flex-end;
-  }
-
-  .toc-tags .tag {
-    text-decoration: none;
-  }
-
-  .toc-tags .tag:hover {
-    text-decoration: none;
-  }
-
-  @media (max-width: 720px) {
-    .toc-item {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-
-    .toc-tags {
-      justify-content: flex-start;
-    }
-  }
+  /* 所有共享样式已移至 global.css */
 </style>

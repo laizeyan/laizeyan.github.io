@@ -1,25 +1,32 @@
 ---
 import Base from "../layouts/Base.astro";
 
-const title = "搜索";
+const title = "搜索 · Ze'Yan";
 const description = "站内全文搜索";
 ---
 
 <Base title={title} description={description}>
-  <h1>站内搜索</h1>
-  <p class="search-hint">输入关键词检索全站内容（由 Pagefind 提供）。</p>
-  <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
-  <pagefind-config base-url="/"></pagefind-config>
-  <pagefind-input></pagefind-input>
-  <pagefind-summary></pagefind-summary>
-  <pagefind-results></pagefind-results>
-  <script src="/pagefind/pagefind-component-ui.js" type="module"></script>
+  <header class="page-head reveal">
+    <p class="section-kicker">检索</p>
+    <h1>站内搜索</h1>
+    <p class="lead page-lead">输入关键词检索全站内容（由 Pagefind 提供）。</p>
+  </header>
+
+  <hr class="rule" />
+
+  <div class="search-body reveal">
+    <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+    <pagefind-config base-url="/"></pagefind-config>
+    <pagefind-input></pagefind-input>
+    <pagefind-summary></pagefind-summary>
+    <pagefind-results></pagefind-results>
+    <script src="/pagefind/pagefind-component-ui.js" type="module"></script>
+  </div>
 </Base>
 
 <style>
-  .search-hint {
-    color: var(--text-muted);
-    margin-bottom: 24px;
+  .search-body {
+    margin-top: 24px;
   }
 
   pagefind-input {

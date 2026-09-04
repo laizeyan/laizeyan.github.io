@@ -1,3 +1,6 @@
+/* ============================================================
+   EDITORIAL MAGAZINE — DESIGN TOKENS
+   ============================================================ */
 :root {
   --bg: #faf8f3;
   --bg-elevated: #f2efe6;
@@ -6,6 +9,20 @@
   --border: #e0dcd0;
   --accent: #b4452e;
   --accent-contrast: #faf8f3;
+
+  /* 辅助强调色 — 墨蓝/藏青，与赭石红形成冷暖对比 */
+  --accent-2: #2f5d62;
+  --accent-2-light: #3d7a80;
+  --accent-2-contrast: #faf8f3;
+
+  /* 层次阴影 */
+  --shadow-sm: 0 1px 3px rgba(22, 20, 15, 0.06);
+  --shadow-md: 0 4px 12px rgba(22, 20, 15, 0.08);
+  --shadow-lg: 0 12px 32px rgba(22, 20, 15, 0.1);
+  --shadow-hover: 0 16px 40px rgba(22, 20, 15, 0.12);
+
+  /* 纸张纹理渐变（微弱，给卡片/区块用） */
+  --paper-gradient: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
 
   --serif: "Playfair Display", "Noto Serif SC", Georgia, "Songti SC", serif;
   --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
@@ -28,6 +45,13 @@
   --border: #e0dcd0;
   --accent: #b4452e;
   --accent-contrast: #faf8f3;
+  --accent-2: #2f5d62;
+  --accent-2-light: #3d7a80;
+  --accent-2-contrast: #faf8f3;
+  --shadow-sm: 0 1px 3px rgba(22, 20, 15, 0.06);
+  --shadow-md: 0 4px 12px rgba(22, 20, 15, 0.08);
+  --shadow-lg: 0 12px 32px rgba(22, 20, 15, 0.1);
+  --shadow-hover: 0 16px 40px rgba(22, 20, 15, 0.12);
 }
 
 [data-theme="dark"] {
@@ -38,8 +62,18 @@
   --border: #3a3630;
   --accent: #d9664a;
   --accent-contrast: #16140f;
+  --accent-2: #5a9da3;
+  --accent-2-light: #7abdc3;
+  --accent-2-contrast: #16140f;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 16px 40px rgba(0, 0, 0, 0.35);
 }
 
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
 *,
 *::before,
 *::after {
@@ -76,6 +110,9 @@ body {
   margin: 0 auto;
 }
 
+/* ============================================================
+   TYPOGRAPHY — DRAMATIC SCALE
+   ============================================================ */
 h1,
 h2,
 h3,
@@ -88,6 +125,29 @@ h6 {
   letter-spacing: -0.01em;
   color: var(--text);
   text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+h1 {
+  font-size: clamp(2.8rem, 8vw, 4.5rem);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: 1.65rem;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+/* ---- 正文段落/列表：均衡末行，消除孤字 ---- */
+p,
+li {
+  text-wrap: pretty;
 }
 
 /* ---- 选中色：accent 背景 + 纸白字，随主题变量切换 ---- */
@@ -119,6 +179,10 @@ button:active {
   transform: scale(0.98);
 }
 
+/* ============================================================
+   MAGAZINE DECORATIVE ELEMENTS
+   ============================================================ */
+
 /* ---- 杂志发丝线 ---- */
 .rule {
   border: 0;
@@ -126,6 +190,29 @@ button:active {
   margin: 0;
   width: 100%;
 }
+
+/* 双线规则 — 用于报头/封面分隔 */
+.double-rule {
+  border: 0;
+  height: 5px;
+  border-top: 2px solid var(--text);
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+  width: 100%;
+}
+
+/* 强调色顶线规则 — 用于章节/卡片顶部 */
+.accent-rule {
+  border: 0;
+  height: 3px;
+  background: var(--accent);
+  margin: 0;
+  width: 100%;
+}
+
+/* ============================================================
+   SHARED: MASTHEAD / SECTION HEAD
+   ============================================================ */
 
 /* ---- 报道头 / 栏目标题 ---- */
 .masthead {
@@ -139,9 +226,21 @@ button:active {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--text);
   padding-bottom: 10px;
   margin-bottom: 24px;
+  position: relative;
+}
+
+.section-head::after {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border);
 }
 
 .section-head h2 {
@@ -180,6 +279,65 @@ button:active {
   font-weight: 400;
 }
 
+/* ============================================================
+   SHARED: PAGE HEAD (blog/tags/archive/projects pages)
+   ============================================================ */
+.page-head {
+  padding: 40px 0 20px;
+}
+
+.page-head h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  margin: 6px 0 12px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.page-lead {
+  margin: 0;
+  max-width: 560px;
+}
+
+/* ============================================================
+   SHARED: TAG FILTER & TAG BUTTONS
+   ============================================================ */
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.tag-btn {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 5px 13px;
+  transition: color var(--t-base) ease, border-color var(--t-base) ease,
+    background-color var(--t-base) ease, transform var(--t-base) ease;
+}
+
+.tag-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.tag-btn:active {
+  transform: scale(0.96);
+}
+
+.tag-btn.active {
+  color: var(--accent-contrast);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---- 标签 ---- */
 .tag {
   display: inline-block;
@@ -193,15 +351,133 @@ button:active {
   text-transform: uppercase;
 }
 
-/* ---- 卡片 ---- */
+/* ============================================================
+   SHARED: TOC (目录式列表)
+   ============================================================ */
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-item {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  gap: 20px;
+  align-items: baseline;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+.toc-item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.toc-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--t-base) ease;
+}
+
+.toc-title:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.toc-desc {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.toc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-content: start;
+  justify-content: flex-end;
+}
+
+.toc-tags .tag {
+  text-decoration: none;
+}
+
+.toc-tags .tag:hover {
+  text-decoration: none;
+}
+
+/* ---- 幽灵序号（大号衬线编号，装饰性） ---- */
+.toc-idx {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--border);
+  letter-spacing: -0.02em;
+  user-select: none;
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   SHARED: LOAD MORE
+   ============================================================ */
+.more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.load-more {
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 28px;
+  transition: color var(--t-base) ease, background-color var(--t-base) ease,
+    border-color var(--t-base) ease, transform var(--t-base) ease;
+}
+
+.load-more:hover {
+  color: var(--accent-contrast);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.load-more:active {
+  transform: scale(0.98);
+}
+
+/* ============================================================
+   CARD — MAGAZINE LAYERED PAPER
+   ============================================================ */
 .card {
   display: block;
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
   border-radius: 4px;
   padding: 22px;
   text-decoration: none;
   color: inherit;
+  box-shadow: var(--shadow-sm);
   transition: transform var(--t-base) ease, border-color var(--t-base) ease,
     box-shadow var(--t-base) ease;
 }
@@ -209,7 +485,8 @@ button:active {
 .card:hover {
   transform: translateY(-4px);
   border-color: var(--accent);
-  box-shadow: 0 12px 28px rgba(22, 20, 15, 0.08);
+  border-top-color: var(--accent);
+  box-shadow: var(--shadow-hover);
   text-decoration: none;
 }
 
@@ -225,16 +502,33 @@ button:active {
   font-size: 0.95rem;
 }
 
-/* ---- 引用块 ---- */
+/* ============================================================
+   BLOCKQUOTE — ENHANCED WITH DECORATIVE QUOTE MARK
+   ============================================================ */
 .prose blockquote {
   margin: 1.6em 0;
-  padding: 0.4em 0 0.4em 1.2em;
+  padding: 0.6em 0 0.6em 1.4em;
   border-left: 3px solid var(--accent);
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.2rem;
   line-height: 1.5;
   color: var(--text);
+  position: relative;
+}
+
+.prose blockquote::before {
+  content: "\201C";
+  font-family: var(--serif);
+  font-size: 3.5rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.25;
+  position: absolute;
+  left: 0.4em;
+  top: -0.1em;
 }
 
 .prose blockquote p {
@@ -247,20 +541,24 @@ button:active {
   color: var(--accent);
 }
 
-/* ---- 首字下沉 ---- */
+/* ============================================================
+   DROPCAP — ENHANCED
+   ============================================================ */
 .dropcap::first-letter,
 .prose .post-body > p:first-of-type::first-letter,
 .prose .project-body > p:first-of-type::first-letter {
   font-family: var(--serif);
   font-weight: 700;
   float: left;
-  font-size: 3.4em;
-  line-height: 0.8;
-  padding: 0.05em 0.12em 0 0;
+  font-size: 3.8em;
+  line-height: 0.78;
+  padding: 0.06em 0.14em 0 0;
   color: var(--accent);
 }
 
-/* ---- 滚动入场 ---- */
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
 .reveal {
   opacity: 0;
   transform: translateY(12px);
@@ -273,6 +571,9 @@ button:active {
   transform: none;
 }
 
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
 code {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
@@ -296,10 +597,11 @@ pre code {
   border: none;
   padding: 0;
   font-size: 0.9em;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
-/* ---- 代码块随主题切换（Shiki 双主题变量） ----
-   背景统一用纸张色 --bg-elevated 融入编辑杂志风，仅语法高亮色随主题切换 */
+/* ---- 代码块随主题切换（Shiki 双主题变量） ---- */
 .astro-code {
   background-color: var(--bg-elevated);
   color: var(--shiki-light, var(--text));
@@ -318,7 +620,6 @@ pre code {
   color: var(--shiki-dark);
 }
 
-/* 代码块横向滚动条：细、融入边框 */
 .astro-code {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
@@ -343,12 +644,13 @@ img {
   border-radius: 4px;
 }
 
-/* 暗色模式下适度降低纯白图片亮度，避免刺眼、提升与背景的融合 */
 [data-theme="dark"] img {
   filter: brightness(0.9) contrast(1.05);
 }
 
-/* ---- 视图过渡（fade，尊重 reduced-motion） ---- */
+/* ============================================================
+   VIEW TRANSITIONS
+   ============================================================ */
 @media (prefers-reduced-motion: no-preference) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
@@ -356,6 +658,9 @@ img {
   }
 }
 
+/* ============================================================
+   REDUCED MOTION — REMOVE ALL TRANSFORMS
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -367,15 +672,20 @@ img {
     transition: none;
   }
 
-  /* 撤位移，仅保留颜色反馈 */
   .card:hover,
   .more:hover,
   .friend-card:hover,
   .uses-card:hover,
   .tag-chip:hover,
+  .tag-btn:hover,
+  .load-more:hover,
   a:active,
   button:active {
     transform: none;
+  }
+
+  .toc-idx {
+    transform: translateY(-50%);
   }
 
   ::view-transition-group(*),
@@ -385,7 +695,9 @@ img {
   }
 }
 
-/* ---- 响应式 ---- */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 900px) {
   .page-container {
     padding: 0 24px;
@@ -403,5 +715,21 @@ img {
 
   .lead {
     font-size: 1.15rem;
+  }
+
+  .toc-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .toc-tags {
+    justify-content: flex-start;
+  }
+
+  .toc-idx {
+    position: static;
+    transform: none;
+    font-size: 1.4rem;
+    margin-bottom: 4px;
   }
 }
