@@ -5,4 +5,14 @@ export default defineConfig({
   base: "",
   site: "https://laizeyan.github.io",
   integrations: [sitemap()],
+  markdown: {
+    shikiConfig: {
+      // 代码块随站点主题切换（亮/暗），而非固定 github-dark
+      themes: {
+        light: "github-light",
+        dark: "github-dark",
+      },
+      defaultColor: false,
+    },
+  },
 });

@@ -39,9 +39,13 @@ const friends: { name: string; url: string; desc: string }[] = [
           }
         </div>
       ) : (
-        <p class="friends-empty">
-          友链整理中，敬请期待。
-        </p>
+        <div class="friends-empty">
+          <span class="friends-empty-mark" aria-hidden="true">§</span>
+          <p class="friends-empty-title">友链整理中</p>
+          <p class="friends-empty-desc">
+            我还在挑选值得长期关注的站点。等第一批友链就位，会在这里排印出来。
+          </p>
+        </div>
       )
     }
 
@@ -125,8 +129,35 @@ const friends: { name: string; url: string; desc: string }[] = [
 
   .friends-empty {
     margin-top: 40px;
+    padding: 48px 24px;
+    text-align: center;
+    background-color: var(--bg-elevated);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+  }
+
+  .friends-empty-mark {
+    display: block;
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .friends-empty-title {
+    margin: 0 0 8px;
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--text);
+  }
+
+  .friends-empty-desc {
+    margin: 0 auto;
     color: var(--text-muted);
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 420px;
   }
 
   .friends-how {

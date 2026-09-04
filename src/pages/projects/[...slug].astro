@@ -120,5 +120,21 @@ const hasLink = Boolean(project.data.url || project.data.repo);
 
   .project-body :global(p) {
     margin: 0 0 1.2em;
+    text-wrap: pretty;
+  }
+
+  .project-body :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 1px;
+    transition: background-size var(--t-base) ease;
+  }
+
+  .project-body :global(a:hover) {
+    background-size: 100% 2px;
   }
 </style>

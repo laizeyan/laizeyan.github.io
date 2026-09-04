@@ -237,12 +237,13 @@ const updated =
     gap: 6px;
   }
 
-  .toc-list li {
+  /* TOC 的 li/a 由 JS 动态创建，无 scoped 属性，须用 :global 才能命中 */
+  .toc-list :global(li) {
     padding: 0;
     border: none;
   }
 
-  .toc-list a {
+  .toc-list :global(a) {
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.92rem;
@@ -253,16 +254,16 @@ const updated =
     transition: color var(--t-base) ease, border-color var(--t-base) ease;
   }
 
-  .toc-list a:hover {
+  .toc-list :global(a:hover) {
     color: var(--accent);
   }
 
-  .toc-list a.active {
+  .toc-list :global(a.active) {
     color: var(--accent);
     border-left-color: var(--accent);
   }
 
-  .toc-list .toc-sub {
+  .toc-list :global(.toc-sub) {
     padding-left: 16px;
     font-size: 0.85rem;
   }
@@ -396,11 +397,21 @@ const updated =
 
   .post-body :global(p) {
     margin: 0 0 1.2em;
+    text-wrap: pretty;
   }
 
   .post-body :global(a) {
     color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration: none;
+    background-image: linear-gradient(var(--accent), var(--accent));
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 1px;
+    transition: background-size var(--t-base) ease;
+  }
+
+  .post-body :global(a:hover) {
+    background-size: 100% 2px;
   }
 </style>

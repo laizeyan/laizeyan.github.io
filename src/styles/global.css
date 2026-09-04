@@ -87,6 +87,13 @@ h6 {
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
+  text-wrap: balance;
+}
+
+/* ---- 选中色：accent 背景 + 纸白字，随主题变量切换 ---- */
+::selection {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
 }
 
 a {
@@ -234,6 +241,12 @@ button:active {
   margin: 0.4em 0;
 }
 
+/* ---- 正文列表 marker 用 accent（自定义列表无 marker，不受影响） ---- */
+.prose ul ::marker,
+.prose ol ::marker {
+  color: var(--accent);
+}
+
 /* ---- 首字下沉 ---- */
 .dropcap::first-letter,
 .prose .post-body > p:first-of-type::first-letter,
@@ -283,6 +296,45 @@ pre code {
   border: none;
   padding: 0;
   font-size: 0.9em;
+}
+
+/* ---- 代码块随主题切换（Shiki 双主题变量） ----
+   背景统一用纸张色 --bg-elevated 融入编辑杂志风，仅语法高亮色随主题切换 */
+.astro-code {
+  background-color: var(--bg-elevated);
+  color: var(--shiki-light, var(--text));
+}
+
+.astro-code span {
+  color: var(--shiki-light);
+}
+
+[data-theme="dark"] .astro-code {
+  background-color: var(--bg-elevated);
+  color: var(--shiki-dark, var(--text));
+}
+
+[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark);
+}
+
+/* 代码块横向滚动条：细、融入边框 */
+.astro-code {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.astro-code::-webkit-scrollbar {
+  height: 8px;
+}
+
+.astro-code::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+.astro-code::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 img {
