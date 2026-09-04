@@ -68,13 +68,18 @@ import Base from "../layouts/Base.astro";
     border-radius: 2px;
     padding: 9px 20px;
     text-decoration: none;
-    transition: all 0.15s ease;
+    transition: color var(--t-base) ease, border-color var(--t-base) ease,
+      background-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .nf-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
     text-decoration: none;
+  }
+
+  .nf-btn:active {
+    transform: scale(0.98);
   }
 
   .nf-btn.primary {

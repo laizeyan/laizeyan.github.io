@@ -35,13 +35,17 @@
     background-color: transparent;
     color: var(--text);
     cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease,
-      background-color 0.2s ease;
+    transition: border-color var(--t-base) ease, color var(--t-base) ease,
+      background-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .theme-toggle:hover {
     border-color: var(--accent);
     color: var(--accent);
+  }
+
+  .theme-toggle:active {
+    transform: scale(0.92);
   }
 
   .theme-toggle-icon::before {

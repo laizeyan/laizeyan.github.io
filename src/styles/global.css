@@ -13,6 +13,11 @@
 
   --maxw: 1100px;
   --readw: 680px;
+
+  /* 动效时长 token */
+  --t-fast: 0.15s;
+  --t-base: 0.2s;
+  --t-slow: 0.6s;
 }
 
 [data-theme="light"] {
@@ -94,6 +99,19 @@ a:hover {
   text-decoration: underline;
 }
 
+/* ---- 键盘焦点可见环 ---- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---- 按压反馈 ---- */
+a:active,
+button:active {
+  transform: scale(0.98);
+}
+
 /* ---- 杂志发丝线 ---- */
 .rule {
   border: 0;
@@ -138,10 +156,12 @@ a:hover {
   color: var(--accent);
   font-size: 0.9rem;
   white-space: nowrap;
+  transition: color var(--t-base) ease, transform var(--t-base) ease;
 }
 
 .more:hover {
   text-decoration: underline;
+  transform: translateY(-1px);
 }
 
 /* ---- 封面导语 ---- */
@@ -175,8 +195,8 @@ a:hover {
   padding: 22px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform var(--t-base) ease, border-color var(--t-base) ease,
+    box-shadow var(--t-base) ease;
 }
 
 .card:hover {
@@ -231,7 +251,8 @@ a:hover {
 .reveal {
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity var(--t-slow) ease var(--reveal-delay, 0s),
+    transform var(--t-slow) ease var(--reveal-delay, 0s);
 }
 
 .reveal.is-visible {
@@ -294,6 +315,17 @@ img {
     transition: none;
   }
 
+  /* 撤位移，仅保留颜色反馈 */
+  .card:hover,
+  .more:hover,
+  .friend-card:hover,
+  .uses-card:hover,
+  .tag-chip:hover,
+  a:active,
+  button:active {
+    transform: none;
+  }
+
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -302,6 +334,12 @@ img {
 }
 
 /* ---- 响应式 ---- */
+@media (max-width: 900px) {
+  .page-container {
+    padding: 0 24px;
+  }
+}
+
 @media (max-width: 720px) {
   body {
     font-size: 16px;

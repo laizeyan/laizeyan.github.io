@@ -118,13 +118,18 @@ const formatDate = (d: Date) =>
     border-radius: 2px;
     padding: 5px 13px;
     text-decoration: none;
-    transition: all 0.15s ease;
+    transition: color var(--t-base) ease, border-color var(--t-base) ease,
+      background-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .tag-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
     text-decoration: none;
+  }
+
+  .tag-btn:active {
+    transform: scale(0.96);
   }
 
   .tag-btn.active {
@@ -164,6 +169,7 @@ const formatDate = (d: Date) =>
     font-size: 1.3rem;
     color: var(--text);
     text-decoration: none;
+    transition: color var(--t-base) ease;
   }
 
   .toc-title:hover {

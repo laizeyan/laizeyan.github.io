@@ -68,7 +68,8 @@ const countFor = (tag: string) =>
     border-radius: 2px;
     padding: 8px 16px;
     text-decoration: none;
-    transition: all 0.15s ease;
+    transition: color var(--t-base) ease, border-color var(--t-base) ease,
+      transform var(--t-base) ease;
   }
 
   .tag-chip:hover {
@@ -76,6 +77,10 @@ const countFor = (tag: string) =>
     border-color: var(--accent);
     transform: translateY(-2px);
     text-decoration: none;
+  }
+
+  .tag-chip:active {
+    transform: scale(0.98);
   }
 
   .tag-count {

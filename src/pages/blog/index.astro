@@ -159,12 +159,17 @@ const formatDate = (d: Date) =>
     border: 1px solid var(--border);
     border-radius: 2px;
     padding: 5px 13px;
-    transition: all 0.15s ease;
+    transition: color var(--t-base) ease, border-color var(--t-base) ease,
+      background-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .tag-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
+  }
+
+  .tag-btn:active {
+    transform: scale(0.96);
   }
 
   .tag-btn.active {
@@ -204,6 +209,7 @@ const formatDate = (d: Date) =>
     font-size: 1.3rem;
     color: var(--text);
     text-decoration: none;
+    transition: color var(--t-base) ease;
   }
 
   .toc-title:hover {
@@ -248,13 +254,18 @@ const formatDate = (d: Date) =>
     border: 1px solid var(--border);
     border-radius: 2px;
     padding: 10px 28px;
-    transition: all 0.2s ease;
+    transition: color var(--t-base) ease, background-color var(--t-base) ease,
+      border-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .load-more:hover {
     color: var(--accent-contrast);
     background-color: var(--accent);
     border-color: var(--accent);
+  }
+
+  .load-more:active {
+    transform: scale(0.98);
   }
 
   @media (max-width: 720px) {

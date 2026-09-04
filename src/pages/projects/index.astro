@@ -135,6 +135,7 @@ const formatDate = (d: Date) =>
   .detail-link {
     color: var(--text);
     text-decoration: none;
+    transition: color var(--t-base) ease;
   }
 
   .detail-link:hover {
@@ -169,12 +170,18 @@ const formatDate = (d: Date) =>
     color: var(--accent);
     font-size: 0.9rem;
     text-decoration: none;
+    transition: color var(--t-base) ease, transform var(--t-base) ease;
+  }
+
+  .card-link:hover {
+    text-decoration: underline;
   }
 
   .external-link {
     color: var(--text-muted);
     font-size: 0.9rem;
     text-decoration: none;
+    transition: color var(--t-base) ease;
   }
 
   .external-link:hover {

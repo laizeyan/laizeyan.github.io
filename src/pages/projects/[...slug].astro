@@ -87,10 +87,15 @@ const hasLink = Boolean(project.data.url || project.data.repo);
     color: var(--accent);
     text-decoration: none;
     font-size: 0.9rem;
+    transition: color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .project-link:hover {
     text-decoration: underline;
+  }
+
+  .project-link:active {
+    transform: scale(0.98);
   }
 
   .lead {

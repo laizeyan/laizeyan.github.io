@@ -68,11 +68,16 @@ const current = Astro.url.pathname;
     color: var(--text);
     text-decoration: none;
     line-height: 1;
+    transition: color var(--t-base) ease;
   }
 
   .masthead-name:hover {
     color: var(--accent);
     text-decoration: none;
+  }
+
+  .masthead-name:active {
+    transform: scale(0.98);
   }
 
   .masthead-tools {
@@ -87,6 +92,7 @@ const current = Astro.url.pathname;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     text-decoration: none;
+    transition: color var(--t-base) ease;
   }
 
   .masthead-search:hover {
@@ -107,12 +113,16 @@ const current = Astro.url.pathname;
     letter-spacing: 0.04em;
     position: relative;
     padding-bottom: 2px;
-    transition: color 0.2s ease;
+    transition: color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .nav-link:hover,
   .nav-link.active {
     color: var(--text);
+  }
+
+  .nav-link:active {
+    transform: scale(0.98);
   }
 
   .nav-link.active {

@@ -94,12 +94,16 @@ const friends: { name: string; url: string; desc: string }[] = [
     border-left: 3px solid var(--accent);
     border-radius: 4px;
     text-decoration: none;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition: border-color var(--t-base) ease, transform var(--t-base) ease;
   }
 
   .friend-card:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
+  }
+
+  .friend-card:active {
+    transform: scale(0.98);
   }
 
   .friend-name {
