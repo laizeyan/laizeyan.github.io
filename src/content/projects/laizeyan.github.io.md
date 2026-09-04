@@ -1,6 +1,7 @@
 ---
 title: "laizeyan.github.io：Astro 个人站点"
 description: "本站点：用 Astro 7 构建的编辑杂志风个人博客，含内容集合、站内搜索、RSS 与标签体系，通过 GitHub Actions 部署到 Pages。"
+slug: "laizeyan-github-io"
 repo: "https://github.com/laizeyan/laizeyan.github.io"
 url: "https://laizeyan.github.io"
 tags: ["Astro", "Web", "前端"]

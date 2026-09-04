@@ -20,13 +20,13 @@ const formatDate = (d: Date) =>
 
 <Base
   title="Ze'Yan · 个人站点"
-  description="Ze'Yan · 热爱构建产品与分享技术的前端工程师。"
+  description="Ze'Yan · AI 驱动的全栈工程师，关注智能体工作流、Linux 与 Web 开发"
 >
   <section class="cover reveal">
     <p class="cover-kicker">个人站点 · PORTFOLIO & WRITING</p>
     <h1 class="cover-title">Ze'Yan</h1>
     <p class="lead cover-lead">
-      热爱构建产品与分享技术的前端工程师。这里汇集我的项目、文章与一些慢思考——像一本持续排印的杂志。
+      AI 驱动的全栈工程师。这里汇集我的项目、文章与一些慢思考——像一本持续排印的杂志。
     </p>
   </section>
 
@@ -46,7 +46,7 @@ const formatDate = (d: Date) =>
         featuredProjects.map((project, i) => (
           <a
             class:list={["feature-card", "card", { wide: i % 3 === 0 }]}
-            href={`/projects/${project.id}`}
+            href={`/projects/${project.data.slug ?? project.id}`}
           >
             <span class="feature-letter" aria-hidden="true">
               {project.data.title.charAt(0)}

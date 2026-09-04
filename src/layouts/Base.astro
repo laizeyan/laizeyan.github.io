@@ -78,6 +78,22 @@ const {
           document.documentElement.dataset.theme = "light";
         }
       });
+
+      // 系统跟随：用户未手动选择时，实时响应系统主题切换
+      try {
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        const onSystemChange = () => {
+          // 用户手动选过则不跟随
+          const stored = localStorage.getItem("theme");
+          if (stored === "light" || stored === "dark") return;
+          document.documentElement.dataset.theme = media.matches
+            ? "dark"
+            : "light";
+        };
+        media.addEventListener("change", onSystemChange);
+      } catch {
+        // matchMedia change API 不可用时静默降级
+      }
     </script>
 
     <ClientRouter />

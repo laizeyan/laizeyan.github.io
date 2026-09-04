@@ -44,6 +44,20 @@ const friends: { name: string; url: string; desc: string }[] = [
         </p>
       )
     }
+
+    <section class="friends-how">
+      <h2>申请友链</h2>
+      <p>
+        想交换友链，欢迎发邮件到
+        <a href="mailto:hi@laizeyan.github.io">hi@laizeyan.github.io</a>
+        。请附上你的站点名称、链接与一句简介。
+      </p>
+      <ul class="friends-rules">
+        <li>内容有长期价值的站点优先——技术笔记、写作、或你真正热爱的东西。</li>
+        <li>站点可正常访问，无恶意或违规内容。</li>
+        <li>先放上本站友链，再来找我，这样更快通过。</li>
+      </ul>
+    </section>
   </article>
 </Base>
 
@@ -109,5 +123,51 @@ const friends: { name: string; url: string; desc: string }[] = [
     margin-top: 40px;
     color: var(--text-muted);
     font-size: 1.05rem;
+  }
+
+  .friends-how {
+    margin-top: 48px;
+    padding: 24px 28px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+  }
+
+  .friends-how h2 {
+    font-size: 1.3rem;
+    margin: 0 0 10px;
+  }
+
+  .friends-how p {
+    margin: 0 0 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .friends-rules {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .friends-rules li {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .friends-rules li::before {
+    content: "§";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--serif);
+    font-weight: 700;
   }
 </style>

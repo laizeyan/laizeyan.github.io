@@ -10,6 +10,9 @@ const allTags = Array.from(
   new Set(posts.flatMap((post) => post.data.tags))
 ).sort();
 
+// 「加载更多」每次揭示的条数；文章超过一屏后按钮才出现
+const perPage = 8;
+
 const formatDate = (d: Date) =>
   d.toLocaleDateString("zh-CN", {
     year: "numeric",
@@ -40,8 +43,8 @@ const formatDate = (d: Date) =>
 
   <ol class="toc reveal">
     {
-      posts.map((post) => (
-        <li class="toc-item" data-tags={post.data.tags.join(",")}>
+      posts.map((post, i) => (
+        <li class="toc-item" data-tags={post.data.tags.join(",")} data-index={i}>
           <time class="toc-date">{formatDate(post.data.pubDate)}</time>
           <div class="toc-main">
             <a class="toc-title" href={`/blog/${post.id}`}>
@@ -58,25 +61,68 @@ const formatDate = (d: Date) =>
       ))
     }
   </ol>
+
+  {
+    posts.length > perPage && (
+      <div class="more-wrap">
+        <button id="load-more" class="load-more" type="button">
+          加载更多
+        </button>
+      </div>
+    )
+  }
 </Base>
 
 <script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>(".tag-btn");
-  const items = document.querySelectorAll<HTMLElement>(".toc-item[data-tags]");
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>(".tag-btn"));
+  const items = Array.from(
+    document.querySelectorAll<HTMLElement>(".toc-item[data-tags]")
+  );
+  const loadMoreBtn = document.querySelector<HTMLButtonElement>("#load-more");
+
+  const perPage = 8;
+  let currentTag = "*";
+  let shown = perPage;
+
+  const apply = () => {
+    items.forEach((item) => {
+      const idx = Number(item.dataset.index ?? 0);
+      const itemTags = (item.dataset.tags || "").split(",");
+      const matchesTag =
+        currentTag === "*" || itemTags.includes(currentTag);
+      const within = idx < shown;
+      item.style.display = matchesTag && within ? "" : "none";
+    });
+
+    // 按钮状态：还有未展示的条目才显示
+    const remaining = items.filter((item) => {
+      const idx = Number(item.dataset.index ?? 0);
+      const itemTags = (item.dataset.tags || "").split(",");
+      return (
+        idx >= shown &&
+        (currentTag === "*" || itemTags.includes(currentTag))
+      );
+    }).length;
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = remaining > 0 ? "" : "none";
+    }
+  };
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      const tag = btn.dataset.tag;
+      currentTag = btn.dataset.tag ?? "*";
       buttons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-
-      items.forEach((item) => {
-        const itemTags = (item.dataset.tags || "").split(",");
-        const show = tag === "*" || (tag !== undefined && itemTags.includes(tag));
-        item.style.display = show ? "" : "none";
-      });
+      apply();
     });
   });
+
+  loadMoreBtn?.addEventListener("click", () => {
+    shown += perPage;
+    apply();
+  });
+
+  apply();
 </script>
 
 <style>
@@ -184,6 +230,31 @@ const formatDate = (d: Date) =>
 
   .toc-tags .tag:hover {
     text-decoration: none;
+  }
+
+  .more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+  }
+
+  .load-more {
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background-color: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px 28px;
+    transition: all 0.2s ease;
+  }
+
+  .load-more:hover {
+    color: var(--accent-contrast);
+    background-color: var(--accent);
+    border-color: var(--accent);
   }
 
   @media (max-width: 720px) {

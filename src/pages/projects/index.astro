@@ -8,6 +8,8 @@ const projects = (await getCollection("projects")).sort(
 
 const linkFor = (p: { data: { url?: string; repo?: string } }) =>
   p.data.url || p.data.repo || "#";
+const hasLink = (p: { data: { url?: string; repo?: string } }) =>
+  Boolean(p.data.url || p.data.repo);
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("zh-CN", {
@@ -29,17 +31,16 @@ const formatDate = (d: Date) =>
   <div class="grid reveal">
     {
       projects.map((project) => (
-        <a
-          class="card project-card"
-          href={linkFor(project)}
-          target="_blank"
-          rel="noopener"
-        >
+        <article class="card project-card">
           <span class="project-letter" aria-hidden="true">
             {project.data.title.charAt(0)}
           </span>
           <div class="project-card-body">
-            <h3>{project.data.title}</h3>
+            <h3>
+              <a class="detail-link" href={`/projects/${project.data.slug ?? project.id}`}>
+                {project.data.title}
+              </a>
+            </h3>
             <p>{project.data.description}</p>
             <div class="tags">
               {project.data.tags.map((tag) => (
@@ -48,12 +49,29 @@ const formatDate = (d: Date) =>
             </div>
             <div class="project-card-foot">
               <time class="project-date">{formatDate(project.data.date)}</time>
-              <span class="card-link">
-                {project.data.url ? "访问 →" : project.data.repo ? "仓库 →" : ""}
+              <span class="card-actions">
+                <a
+                  class="card-link"
+                  href={`/projects/${project.data.slug ?? project.id}`}
+                >
+                  详情 →
+                </a>
+                {
+                  hasLink(project) && (
+                    <a
+                      class="external-link"
+                      href={linkFor(project)}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      {project.data.url ? "外部 →" : "仓库 →"}
+                    </a>
+                  )
+                }
               </span>
             </div>
           </div>
-        </a>
+        </article>
       ))
     }
   </div>
@@ -112,7 +130,15 @@ const formatDate = (d: Date) =>
   .project-card-body h3 {
     margin: 0 0 8px;
     font-size: 1.25rem;
+  }
+
+  .detail-link {
     color: var(--text);
+    text-decoration: none;
+  }
+
+  .detail-link:hover {
+    color: var(--accent);
   }
 
   .project-card-body > p {
@@ -133,8 +159,26 @@ const formatDate = (d: Date) =>
     font-variant-numeric: tabular-nums;
   }
 
+  .card-actions {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
   .card-link {
     color: var(--accent);
     font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .external-link {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .external-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
   }
 </style>
