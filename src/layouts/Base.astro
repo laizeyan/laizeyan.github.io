@@ -106,11 +106,16 @@ const {
     <ClientRouter />
   </head>
   <body>
-    <Header />
-    <main class="page-container">
-      <slot />
-    </main>
-    <Footer />
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="frame-marks" aria-hidden="true"></div>
+    <div class="watermark-layer" aria-hidden="true"><span class="wm-text">ZE'YAN</span></div>
+    <div class="page-container">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
 
     <script is:inline data-astro-rerun>
       (function () {
