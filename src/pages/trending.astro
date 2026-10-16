@@ -40,6 +40,11 @@ function formatNum(num: number) {
   return String(num);
 }
 
+// 初始分段 (Bento Grid)
+const top1 = initialRepos[0];
+const top2_3 = initialRepos.slice(1, 3);
+const restRepos = initialRepos.slice(3);
+
 // 统计初始周次编程语言
 const initialLangCounts: Record<string, number> = {};
 initialRepos.forEach((r) => {
@@ -99,52 +104,150 @@ const initialLangs = Object.keys(initialLangCounts).sort();
       </div>
     </div>
 
-    <!-- 仓库列表容器 (SSR 初始直出，无须等待客户端二次渲染) -->
-    <div id="repos-container" class="repos-list">
+    <!-- 仓库 Bento Grid 列表容器 (SSR 初始直出) -->
+    <div id="repos-container" class="trending-bento-wrap">
       {
-        initialRepos.map((repo, idx) => {
-          const rank = String(idx + 1).padStart(2, "0");
-          const isTop3 = idx < 3;
-          return (
-            <div class:list={["repo-card", { "is-top3": isTop3 }]}>
-              <div class="repo-header">
-                <span class="repo-rank" aria-label={`排名第 ${rank}`}>{rank}</span>
-                <div class="repo-title-wrap">
-                  <a href={repo.url} target="_blank" rel="noopener noreferrer" class="repo-link">
-                    <span class="repo-owner">{repo.owner}</span>
-                    <span class="repo-slash">/</span>
-                    <span class="repo-name">{repo.repo}</span>
+        initialRepos.length === 0 ? (
+          <div class="empty-state">
+            <p>当前分类下暂无项目记录。</p>
+          </div>
+        ) : (
+          <>
+            {top1 && (
+              <div class="trending-hero-card">
+                <div class="hero-top-badge">
+                  <span class="hero-crown">👑 TOP 01 · 本周热度榜首</span>
+                  {top1.todayStars > 0 && (
+                    <span class="hero-growth-badge" title="本周 Star 激增">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                      +{formatNum(top1.todayStars)} 本周增长
+                    </span>
+                  )}
+                </div>
+                
+                <div class="hero-main-content">
+                  <div class="hero-text-block">
+                    <div class="hero-author-kicker">
+                      <span class="hero-owner">{top1.owner}</span>
+                      <span class="hero-slash">/</span>
+                    </div>
+                    <h2 class="hero-repo-title">
+                      <a href={top1.url} target="_blank" rel="noopener noreferrer" class="hero-repo-link">
+                        {top1.repo}
+                        <svg class="external-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      </a>
+                    </h2>
+                    {top1.description && <p class="hero-repo-desc">{top1.description}</p>}
+                  </div>
+                </div>
+
+                <div class="hero-meta-footer">
+                  <div class="hero-stats">
+                    {top1.language && (
+                      <span class="meta-item hero-lang">
+                        <span class="lang-dot" style={{ backgroundColor: top1.langColor || "var(--accent)" }}></span>
+                        {top1.language}
+                      </span>
+                    )}
+                    <span class="meta-item" title="总 Star 数">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      {formatNum(top1.stars)}
+                    </span>
+                    <span class="meta-item" title="Fork 数">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                      {formatNum(top1.forks)}
+                    </span>
+                  </div>
+                  <a href={top1.url} target="_blank" rel="noopener noreferrer" class="hero-action-btn">
+                    查看项目 ➔
                   </a>
                 </div>
               </div>
+            )}
 
-              {repo.description && <p class="repo-desc">{repo.description}</p>}
-
-              <div class="repo-meta">
-                {repo.language && (
-                  <span class="meta-item repo-lang">
-                    <span class="lang-dot" style={{ backgroundColor: repo.langColor || "var(--accent)" }}></span>
-                    {repo.language}
-                  </span>
-                )}
-                <span class="meta-item repo-stars" title="总 Star 数">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  {formatNum(repo.stars)}
-                </span>
-                <span class="meta-item repo-forks" title="Fork 数">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
-                  {formatNum(repo.forks)}
-                </span>
-                {repo.todayStars > 0 && (
-                  <span class="meta-item repo-growth" title="本周 Star 新增">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                    +{formatNum(repo.todayStars)} 本周新增
-                  </span>
-                )}
+            {top2_3.length > 0 && (
+              <div class="trending-spotlight-grid">
+                {top2_3.map((repo, idx) => {
+                  const rankNum = idx + 2;
+                  const rankStr = String(rankNum).padStart(2, "0");
+                  return (
+                    <div class:list={["spotlight-card", `is-rank-${rankNum}`]}>
+                      <div class="spotlight-header">
+                        <span class="spotlight-rank">TOP {rankStr}</span>
+                        {repo.todayStars > 0 && (
+                          <span class="spotlight-growth">+{formatNum(repo.todayStars)}</span>
+                        )}
+                      </div>
+                      <h3 class="spotlight-title">
+                        <a href={repo.url} target="_blank" rel="noopener noreferrer">
+                          <span class="repo-owner">{repo.owner} / </span>{repo.repo}
+                        </a>
+                      </h3>
+                      {repo.description && <p class="spotlight-desc">{repo.description}</p>}
+                      <div class="spotlight-meta">
+                        {repo.language && (
+                          <span class="meta-item">
+                            <span class="lang-dot" style={{ backgroundColor: repo.langColor || "var(--accent)" }}></span>
+                            {repo.language}
+                          </span>
+                        )}
+                        <span class="meta-item">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                          {formatNum(repo.stars)}
+                        </span>
+                        <span class="meta-item">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                          {formatNum(repo.forks)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-          );
-        })
+            )}
+
+            {restRepos.length > 0 && (
+              <div class="trending-dense-grid">
+                {restRepos.map((repo, idx) => {
+                  const rankNum = idx + 4;
+                  const rankStr = String(rankNum).padStart(2, "0");
+                  return (
+                    <div class="dense-repo-card">
+                      <div class="dense-card-top">
+                        <span class="dense-rank">{rankStr}</span>
+                        <div class="dense-title-wrap">
+                          <a href={repo.url} target="_blank" rel="noopener noreferrer" class="dense-repo-link">
+                            <span class="dense-owner">{repo.owner} / </span><span class="dense-name">{repo.repo}</span>
+                          </a>
+                        </div>
+                        {repo.todayStars > 0 && (
+                          <span class="dense-growth">+{formatNum(repo.todayStars)}</span>
+                        )}
+                      </div>
+                      {repo.description && <p class="dense-desc">{repo.description}</p>}
+                      <div class="dense-meta">
+                        {repo.language && (
+                          <span class="meta-item">
+                            <span class="lang-dot" style={{ backgroundColor: repo.langColor || "var(--accent)" }}></span>
+                            {repo.language}
+                          </span>
+                        )}
+                        <span class="meta-item">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                          {formatNum(repo.stars)}
+                        </span>
+                        <span class="meta-item">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                          {formatNum(repo.forks)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )
       }
     </div>
   </article>
@@ -234,54 +337,152 @@ const initialLangs = Object.keys(initialLangCounts).sort();
           return;
         }
 
+        const top1 = filtered[0];
+        const top2_3 = filtered.slice(1, 3);
+        const rest = filtered.slice(3);
+
         let html = "";
-        filtered.forEach((repo: any, idx: number) => {
-          const rank = String(idx + 1).padStart(2, "0");
-          const isTop3 = idx < 3;
+
+        // 1. Top 1 Hero Card
+        if (top1) {
           html += `
-            <div class="repo-card ${isTop3 ? "is-top3" : ""}">
-              <div class="repo-header">
-                <span class="repo-rank" aria-label="排名第 ${rank}">${rank}</span>
-                <div class="repo-title-wrap">
-                  <a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener noreferrer" class="repo-link">
-                    <span class="repo-owner">${escapeHtml(repo.owner)}</span>
-                    <span class="repo-slash">/</span>
-                    <span class="repo-name">${escapeHtml(repo.repo)}</span>
-                  </a>
+            <div class="trending-hero-card">
+              <div class="hero-top-badge">
+                <span class="hero-crown">👑 TOP 01 · 本周热度榜首</span>
+                ${
+                  top1.todayStars > 0
+                    ? `<span class="hero-growth-badge" title="本周 Star 激增">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        +${formatNum(top1.todayStars)} 本周增长
+                      </span>`
+                    : ""
+                }
+              </div>
+              <div class="hero-main-content">
+                <div class="hero-text-block">
+                  <div class="hero-author-kicker">
+                    <span class="hero-owner">${escapeHtml(top1.owner)}</span>
+                    <span class="hero-slash">/</span>
+                  </div>
+                  <h2 class="hero-repo-title">
+                    <a href="${escapeHtml(top1.url)}" target="_blank" rel="noopener noreferrer" class="hero-repo-link">
+                      ${escapeHtml(top1.repo)}
+                      <svg class="external-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                  </h2>
+                  ${top1.description ? `<p class="hero-repo-desc">${escapeHtml(top1.description)}</p>` : ""}
                 </div>
               </div>
-
-              ${repo.description ? `<p class="repo-desc">${escapeHtml(repo.description)}</p>` : ""}
-
-              <div class="repo-meta">
-                ${
-                  repo.language
-                    ? `<span class="meta-item repo-lang">
-                        <span class="lang-dot" style="background-color: ${escapeHtml(repo.langColor || "var(--accent)")}"></span>
-                        ${escapeHtml(repo.language)}
-                      </span>`
-                    : ""
-                }
-                <span class="meta-item repo-stars" title="总 Star 数">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  ${formatNum(repo.stars)}
-                </span>
-                <span class="meta-item repo-forks" title="Fork 数">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
-                  ${formatNum(repo.forks)}
-                </span>
-                ${
-                  repo.todayStars
-                    ? `<span class="meta-item repo-growth" title="本周 Star 新增">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                        +${formatNum(repo.todayStars)} 本周新增
-                      </span>`
-                    : ""
-                }
+              <div class="hero-meta-footer">
+                <div class="hero-stats">
+                  ${
+                    top1.language
+                      ? `<span class="meta-item hero-lang">
+                          <span class="lang-dot" style="background-color: ${escapeHtml(top1.langColor || "var(--accent)")}"></span>
+                          ${escapeHtml(top1.language)}
+                        </span>`
+                      : ""
+                  }
+                  <span class="meta-item" title="总 Star 数">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    ${formatNum(top1.stars)}
+                  </span>
+                  <span class="meta-item" title="Fork 数">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                    ${formatNum(top1.forks)}
+                  </span>
+                </div>
+                <a href="${escapeHtml(top1.url)}" target="_blank" rel="noopener noreferrer" class="hero-action-btn">
+                  查看项目 ➔
+                </a>
               </div>
             </div>
           `;
-        });
+        }
+
+        // 2. Spotlight Grid
+        if (top2_3.length > 0) {
+          html += '<div class="trending-spotlight-grid">';
+          top2_3.forEach((repo: any, idx: number) => {
+            const rankNum = idx + 2;
+            const rankStr = String(rankNum).padStart(2, "0");
+            html += `
+              <div class="spotlight-card is-rank-${rankNum}">
+                <div class="spotlight-header">
+                  <span class="spotlight-rank">TOP ${rankStr}</span>
+                  ${repo.todayStars > 0 ? `<span class="spotlight-growth">+${formatNum(repo.todayStars)}</span>` : ""}
+                </div>
+                <h3 class="spotlight-title">
+                  <a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener noreferrer">
+                    <span class="repo-owner">${escapeHtml(repo.owner)} / </span>${escapeHtml(repo.repo)}
+                  </a>
+                </h3>
+                ${repo.description ? `<p class="spotlight-desc">${escapeHtml(repo.description)}</p>` : ""}
+                <div class="spotlight-meta">
+                  ${
+                    repo.language
+                      ? `<span class="meta-item">
+                          <span class="lang-dot" style="background-color: ${escapeHtml(repo.langColor || "var(--accent)")}"></span>
+                          ${escapeHtml(repo.language)}
+                        </span>`
+                      : ""
+                  }
+                  <span class="meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    ${formatNum(repo.stars)}
+                  </span>
+                  <span class="meta-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                    ${formatNum(repo.forks)}
+                  </span>
+                </div>
+              </div>
+            `;
+          });
+          html += "</div>";
+        }
+
+        // 3. Dense Bento Grid
+        if (rest.length > 0) {
+          html += '<div class="trending-dense-grid">';
+          rest.forEach((repo: any, idx: number) => {
+            const rankNum = idx + 4;
+            const rankStr = String(rankNum).padStart(2, "0");
+            html += `
+              <div class="dense-repo-card">
+                <div class="dense-card-top">
+                  <span class="dense-rank">${rankStr}</span>
+                  <div class="dense-title-wrap">
+                    <a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener noreferrer" class="dense-repo-link">
+                      <span class="dense-owner">${escapeHtml(repo.owner)} / </span><span class="dense-name">${escapeHtml(repo.repo)}</span>
+                    </a>
+                  </div>
+                  ${repo.todayStars > 0 ? `<span class="dense-growth">+${formatNum(repo.todayStars)}</span>` : ""}
+                </div>
+                ${repo.description ? `<p class="dense-desc">${escapeHtml(repo.description)}</p>` : ""}
+                <div class="dense-meta">
+                  ${
+                    repo.language
+                      ? `<span class="meta-item">
+                          <span class="lang-dot" style="background-color: ${escapeHtml(repo.langColor || "var(--accent)")}"></span>
+                          ${escapeHtml(repo.language)}
+                        </span>`
+                      : ""
+                  }
+                  <span class="meta-item">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    ${formatNum(repo.stars)}
+                  </span>
+                  <span class="meta-item">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                    ${formatNum(repo.forks)}
+                  </span>
+                </div>
+              </div>
+            `;
+          });
+          html += "</div>";
+        }
 
         reposContainer!.innerHTML = html;
       }
@@ -417,112 +618,355 @@ const initialLangs = Object.keys(initialLangCounts).sort();
     font-weight: 600;
   }
 
-  .repos-list {
+  .trending-bento-wrap {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     margin-top: 24px;
   }
 
-  :global(.repo-card) {
+  /* Top 1 杂志头条卡片 */
+  :global(.trending-hero-card) {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 20px 24px;
+    padding: 28px 32px;
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--border);
-    border-radius: 4px;
+    border-top: 4px solid var(--accent);
+    border-radius: 8px;
     box-shadow: var(--shadow-sm);
-    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease,
-      border-left-color var(--t-base) ease;
+    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease;
   }
 
-  :global(.repo-card:hover) {
+  :global(.trending-hero-card:hover) {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    border-left-color: var(--accent);
   }
 
-  :global(.repo-card.is-top3) {
-    border-left-color: var(--accent);
-  }
-
-  :global(.repo-header) {
+  :global(.hero-top-badge) {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
   }
 
-  :global(.repo-rank) {
+  :global(.hero-crown) {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  :global(.hero-growth-badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(180, 69, 46, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(180, 69, 46, 0.25);
+    border-radius: 20px;
     font-family: var(--sans);
     font-size: 0.82rem;
     font-weight: 700;
+  }
+
+  :global(.hero-author-kicker) {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 500;
     color: var(--text-muted);
-    background-color: var(--bg);
-    border: 1px solid var(--border);
-    padding: 2px 7px;
-    border-radius: 3px;
-    line-height: 1;
+    margin-bottom: 4px;
   }
 
-  :global(.is-top3 .repo-rank) {
-    background-color: var(--accent);
-    color: var(--accent-contrast);
-    border-color: var(--accent);
-  }
-
-  :global(.repo-title-wrap) {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  :global(.repo-link) {
-    font-family: "Noto Serif SC", var(--serif);
-    font-size: 1.25rem;
+  :global(.hero-repo-title) {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
     font-weight: 700;
+    margin: 4px 0 12px;
+    line-height: 1.2;
+  }
+
+  :global(.hero-repo-link) {
     color: var(--text);
     text-decoration: none;
-    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     transition: color var(--t-fast) ease;
   }
 
-  :global(.repo-link:hover) {
+  :global(.hero-repo-link:hover) {
     color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 4px;
   }
 
-  :global(.repo-owner) {
-    font-weight: 500;
+  :global(.external-icon) {
+    color: var(--text-muted);
+    opacity: 0.7;
+    transition: transform var(--t-fast) ease;
+  }
+
+  :global(.hero-repo-link:hover .external-icon) {
+    transform: translate(2px, -2px);
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  :global(.hero-repo-desc) {
+    font-family: var(--sans);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--text);
+    margin: 0 0 20px;
+    max-width: 860px;
+  }
+
+  :global(.hero-meta-footer) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  :global(.hero-stats) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
     color: var(--text-muted);
   }
 
-  :global(.repo-slash) {
-    margin: 0 4px;
-    color: var(--border);
-  }
-
-  :global(.repo-desc) {
+  :global(.hero-action-btn) {
     font-family: var(--sans);
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: var(--text);
-    margin: 0;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 7px 18px;
+    background-color: var(--text);
+    color: var(--bg);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all var(--t-fast) ease;
   }
 
-  :global(.repo-meta) {
+  :global(.hero-action-btn:hover) {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+    transform: translateX(2px);
+  }
+
+  /* Top 2 & 3 双列聚焦卡片 */
+  :global(.trending-spotlight-grid) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+
+  :global(.spotlight-card) {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px 24px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent-2);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease;
+  }
+
+  :global(.spotlight-card.is-rank-2) {
+    border-top-color: var(--accent);
+  }
+
+  :global(.spotlight-card:hover) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  :global(.spotlight-header) {
+    display: flex;
     align-items: center;
-    gap: 16px;
-    margin-top: 4px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--border);
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  :global(.spotlight-rank) {
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent-contrast);
+    background-color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  :global(.is-rank-3 .spotlight-rank) {
+    background-color: var(--accent-2);
+  }
+
+  :global(.spotlight-growth) {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  :global(.spotlight-title) {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    line-height: 1.35;
+  }
+
+  :global(.spotlight-title a) {
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--t-fast) ease;
+  }
+
+  :global(.spotlight-title a:hover) {
+    color: var(--accent);
+  }
+
+  :global(.spotlight-desc) {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text);
+    margin: 0 0 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.spotlight-meta) {
+    display: flex;
+    align-items: center;
+    gap: 14px;
     font-family: var(--sans);
     font-size: 0.82rem;
     color: var(--text-muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 10px;
+    margin-top: auto;
+  }
+
+  /* 4+ 密集精细网格 */
+  :global(.trending-dense-grid) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  :global(.dense-repo-card) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 16px 18px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--t-base) ease, border-color var(--t-base) ease, box-shadow var(--t-base) ease;
+  }
+
+  :global(.dense-repo-card:hover) {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  :global(.dense-card-top) {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  :global(.dense-rank) {
+    font-family: var(--sans);
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  :global(.dense-title-wrap) {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.dense-repo-link) {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--t-fast) ease;
+  }
+
+  :global(.dense-repo-link:hover) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  :global(.dense-owner) {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  :global(.dense-growth) {
+    font-family: var(--sans);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  :global(.dense-desc) {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin: 0 0 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.dense-meta) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-top: 1px dashed var(--border);
+    padding-top: 8px;
+    margin-top: auto;
   }
 
   :global(.meta-item) {
@@ -538,11 +982,6 @@ const initialLangs = Object.keys(initialLangCounts).sort();
     display: inline-block;
   }
 
-  :global(.repo-growth) {
-    color: var(--accent);
-    font-weight: 600;
-  }
-
   :global(.empty-state) {
     text-align: center;
     padding: 60px 20px;
@@ -554,7 +993,7 @@ const initialLangs = Object.keys(initialLangCounts).sort();
     border-radius: 6px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .control-group,
     .lang-filter-wrap {
       flex-direction: column;
@@ -566,12 +1005,24 @@ const initialLangs = Object.keys(initialLangCounts).sort();
       max-width: 100%;
     }
 
-    :global(.repo-header) {
-      gap: 10px;
+    :global(.trending-hero-card) {
+      padding: 20px;
     }
 
-    :global(.repo-link) {
-      font-size: 1.1rem;
+    :global(.hero-meta-footer) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    :global(.hero-action-btn) {
+      width: 100%;
+      text-align: center;
+    }
+
+    :global(.trending-spotlight-grid),
+    :global(.trending-dense-grid) {
+      grid-template-columns: 1fr;
     }
   }
 </style>

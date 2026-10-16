@@ -101,11 +101,17 @@ const toolCategories = [
           </div>
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">输入 JSON</span>
+              <div class="pane-header">
+                <span class="pane-tag">INPUT</span>
+                <span class="col-kicker">输入 JSON 数据</span>
+              </div>
               <textarea id="json-input" class="code-area" placeholder="在此粘贴或输入 JSON 数据，或点击上方「示例」..."></textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">处理结果</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">OUTPUT</span>
+                <span class="col-kicker">处理结果</span>
+              </div>
               <pre id="json-output" class="code-area code-result"></pre>
             </div>
           </div>
@@ -126,11 +132,17 @@ const toolCategories = [
           </div>
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">原始输入</span>
+              <div class="pane-header">
+                <span class="pane-tag">INPUT</span>
+                <span class="col-kicker">原始输入</span>
+              </div>
               <textarea id="b64-input" class="code-area" placeholder="输入要编码的明文，或要解码的 Base64 字符串..."></textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">转换输出</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">OUTPUT</span>
+                <span class="col-kicker">转换输出</span>
+              </div>
               <textarea id="b64-output" class="code-area" readonly placeholder="处理结果将在此显示..."></textarea>
             </div>
           </div>
@@ -151,11 +163,17 @@ const toolCategories = [
           </div>
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">待处理 URL / 参数文本</span>
+              <div class="pane-header">
+                <span class="pane-tag">INPUT</span>
+                <span class="col-kicker">待处理 URL / 参数文本</span>
+              </div>
               <textarea id="url-input" class="code-area" placeholder="输入 URL 或 query 字符串..."></textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">转换结果</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">OUTPUT</span>
+                <span class="col-kicker">转换结果</span>
+              </div>
               <textarea id="url-output" class="code-area" readonly placeholder="输出结果..."></textarea>
             </div>
           </div>
@@ -176,11 +194,17 @@ const toolCategories = [
           </div>
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">输入文本 / 编码</span>
+              <div class="pane-header">
+                <span class="pane-tag">INPUT</span>
+                <span class="col-kicker">输入文本 / 编码</span>
+              </div>
               <textarea id="uni-input" class="code-area" placeholder="输入中文或 \\u4e2d\\u6587..."></textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">转换结果</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">OUTPUT</span>
+                <span class="col-kicker">转换结果</span>
+              </div>
               <textarea id="uni-output" class="code-area" readonly placeholder="输出结果..."></textarea>
             </div>
           </div>
@@ -268,11 +292,17 @@ const toolCategories = [
           </div>
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">原始文本 (Original)</span>
+              <div class="pane-header">
+                <span class="pane-tag">ORIGINAL</span>
+                <span class="col-kicker">原始文本</span>
+              </div>
               <textarea id="diff-original" class="code-area" placeholder="输入原始内容，或点击上方「填入对比示例」..."></textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">修改后文本 (Modified)</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">MODIFIED</span>
+                <span class="col-kicker">修改后文本</span>
+              </div>
               <textarea id="diff-modified" class="code-area" placeholder="输入修改后内容..."></textarea>
             </div>
           </div>
@@ -304,11 +334,17 @@ const toolCategories = [
 
           <div class="editor-grid">
             <div class="editor-col">
-              <span class="col-kicker">测试匹配文本</span>
+              <div class="pane-header">
+                <span class="pane-tag">TEXT</span>
+                <span class="col-kicker">待测试文本</span>
+              </div>
               <textarea id="regex-text" class="code-area" placeholder="在此输入待匹配的测试文本...">欢迎咨询 contact@example.com 或 feedback@service.cn</textarea>
             </div>
             <div class="editor-col">
-              <span class="col-kicker">匹配结果回显</span>
+              <div class="pane-header">
+                <span class="pane-tag pane-tag-out">MATCHES</span>
+                <span class="col-kicker">匹配捕获结果</span>
+              </div>
               <div id="regex-matches-box" class="code-area code-result regex-results-box">
                 <p class="text-muted">等待测试...</p>
               </div>
@@ -996,8 +1032,8 @@ const toolCategories = [
 
   .toolbox-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 32px;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 24px;
     margin-top: 28px;
     align-items: start;
   }
@@ -1005,15 +1041,15 @@ const toolCategories = [
   .toolbox-sidebar {
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 18px 14px;
+    border-radius: 8px;
+    padding: 16px 12px;
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 80px;
   }
 
   .tool-cat-group {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .tool-cat-group:last-child {
@@ -1023,9 +1059,9 @@ const toolCategories = [
   .cat-title {
     display: block;
     font-family: var(--sans);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
     padding: 0 8px 6px;
@@ -1050,7 +1086,7 @@ const toolCategories = [
     color: var(--text);
     font-family: var(--sans);
     font-size: 0.88rem;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     text-align: left;
     transition: all var(--t-fast) ease;
@@ -1083,10 +1119,10 @@ const toolCategories = [
   .toolbox-panel {
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 24px 28px;
     box-shadow: var(--shadow-sm);
-    min-height: 520px;
+    min-height: 540px;
   }
 
   .tool-section h2 {
@@ -1167,6 +1203,33 @@ const toolCategories = [
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
+  }
+
+  .pane-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .pane-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-muted);
+    line-height: 1.2;
+  }
+
+  .pane-tag-out {
+    background-color: rgba(180, 69, 46, 0.08);
+    border-color: rgba(180, 69, 46, 0.2);
+    color: var(--accent);
   }
 
   .col-kicker {
@@ -1180,23 +1243,26 @@ const toolCategories = [
 
   .code-area {
     width: 100%;
-    height: 320px;
-    padding: 12px 14px;
+    height: 360px;
+    min-height: 320px;
+    padding: 14px 16px;
     background-color: var(--bg);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    font-family: "JetBrains Mono", Consolas, Menlo, monospace;
+    border-radius: 6px;
+    font-family: var(--mono);
     font-size: 0.88rem;
-    line-height: 1.5;
+    line-height: 1.55;
+    tab-size: 2;
     resize: vertical;
     outline: none;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
-    transition: border-color var(--t-base) ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: border-color var(--t-base) ease, box-shadow var(--t-base) ease;
   }
 
   .code-area:focus {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(180, 69, 46, 0.12);
   }
 
   .code-result {
@@ -1206,18 +1272,28 @@ const toolCategories = [
   }
 
   .status-msg {
-    margin-top: 10px;
+    margin-top: 12px;
     font-family: var(--sans);
     font-size: 0.85rem;
     font-weight: 500;
+    display: inline-block;
+    transition: all var(--t-fast) ease;
   }
 
   .status-ok {
     color: #2e7d32;
+    background-color: rgba(46, 125, 50, 0.08);
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    padding: 5px 12px;
+    border-radius: 4px;
   }
 
   .status-err {
     color: var(--accent);
+    background-color: rgba(180, 69, 46, 0.08);
+    border: 1px solid rgba(180, 69, 46, 0.2);
+    padding: 5px 12px;
+    border-radius: 4px;
   }
 
   /* 时间戳样式 */
@@ -1503,27 +1579,85 @@ const toolCategories = [
     margin: 0;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 960px) {
     .toolbox-layout {
       grid-template-columns: 1fr;
-    }
-
-    .editor-grid,
-    .time-convert-grid {
-      grid-template-columns: 1fr;
+      gap: 18px;
     }
 
     .toolbox-sidebar {
       position: static;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 10px 14px;
+      mask-image: linear-gradient(90deg, black 0%, black calc(100% - 24px), transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, black 0%, black calc(100% - 24px), transparent 100%);
+    }
+
+    .toolbox-sidebar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tool-cat-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .cat-title {
+      margin-bottom: 0;
+      border-bottom: none;
+      border-right: 1px dashed var(--border);
+      padding: 0 10px 0 0;
+      white-space: nowrap;
     }
 
     .tool-nav {
       flex-direction: row;
-      flex-wrap: wrap;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .tool-btn {
       width: auto;
+      white-space: nowrap;
+      padding: 6px 12px;
+    }
+
+    .toolbox-panel {
+      padding: 20px;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .editor-grid,
+    .time-convert-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .code-area {
+      height: 280px;
+    }
+
+    .tool-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .tool-actions {
+      width: 100%;
+    }
+
+    .input-row {
+      flex-direction: column;
     }
   }
 </style>
