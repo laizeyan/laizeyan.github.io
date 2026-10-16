@@ -71,7 +71,7 @@
         return;
       }
 
-      // 提取扩散原点坐标 (若键盘点击则居中对齐按钮)
+      // 提取水波纹扩散中心点坐标（键盘触发则取按钮几何中心）
       const rect = btn.getBoundingClientRect();
       const x = e.clientX || rect.left + rect.width / 2;
       const y = e.clientY || rect.top + rect.height / 2;
@@ -82,26 +82,41 @@
         Math.max(y, window.innerHeight - y)
       );
 
+      // 关键优化：在快照与扩散期间暂时阻断 DOM 内一切常规 CSS transition，释放主线程与 GPU
+      root.classList.add("disable-transitions");
+
       const transition = startViewTransition.call(document, () => {
         toggleTheme();
       });
 
-      transition.ready.then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
+      transition.ready
+        .then(() => {
+          const clipPath = [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ];
 
-        document.documentElement.animate(
-          {
-            clipPath,
-          },
-          {
-            duration: 500,
-            easing: "ease-in",
-            pseudoElement: "::view-transition-new(root)",
-          }
-        );
+          const animation = document.documentElement.animate(
+            {
+              clipPath: clipPath,
+            },
+            {
+              duration: 460,
+              easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+              pseudoElement: "::view-transition-new(root)",
+            }
+          );
+
+          animation.onfinish = () => {
+            root.classList.remove("disable-transitions");
+          };
+        })
+        .catch(() => {
+          root.classList.remove("disable-transitions");
+        });
+
+      transition.finished.finally(() => {
+        root.classList.remove("disable-transitions");
       });
     });
   }

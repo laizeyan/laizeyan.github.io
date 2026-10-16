@@ -745,6 +745,7 @@ img {
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
+  will-change: clip-path;
 }
 
 ::view-transition-old(root) {
@@ -753,6 +754,14 @@ img {
 
 ::view-transition-new(root) {
   z-index: 999;
+}
+
+/* 主题水波纹扩散期间冻结 DOM 内部 transition，避免主线程重绘掉帧 */
+.disable-transitions,
+.disable-transitions *,
+.disable-transitions *::before,
+.disable-transitions *::after {
+  transition: none !important;
 }
 
 /* ============================================================
@@ -779,11 +788,6 @@ img {
       color-mix(in srgb, var(--bg-noise-color) calc(var(--bg-noise-opacity) * 0.7), transparent) 8px
     );
   pointer-events: none;
-  mix-blend-mode: multiply;
-}
-
-[data-theme="dark"] .noise-overlay {
-  mix-blend-mode: normal;
 }
 
 body::before {
