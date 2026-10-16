@@ -24,12 +24,30 @@ interface WeekData {
 }
 
 const weeks: WeekData[] = (trendingRaw as { weeks: WeekData[] }).weeks || [];
+const latestWeek = weeks[0] || { repos: [] };
+const initialRepos = latestWeek.repos || [];
 
 function formatDate(dateStr: string) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
   return `${d.getMonth() + 1}月${d.getDate()}日`;
 }
+
+function formatNum(num: number) {
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  }
+  return String(num);
+}
+
+// 统计初始周次编程语言
+const initialLangCounts: Record<string, number> = {};
+initialRepos.forEach((r) => {
+  if (r.language) {
+    initialLangCounts[r.language] = (initialLangCounts[r.language] || 0) + 1;
+  }
+});
+const initialLangs = Object.keys(initialLangCounts).sort();
 ---
 
 <Base
@@ -69,43 +87,109 @@ function formatDate(dateStr: string) {
       <div class="lang-filter-wrap">
         <span class="control-label">语言筛选</span>
         <div class="lang-tags" id="lang-tags-container">
-          <button class="lang-tag active" data-lang="">全部</button>
+          <button class="lang-tag active" data-lang="">全部 ({initialRepos.length})</button>
+          {
+            initialLangs.map((lang) => (
+              <button class="lang-tag" data-lang={lang}>
+                {lang} ({initialLangCounts[lang]})
+              </button>
+            ))
+          }
         </div>
       </div>
     </div>
 
-    <!-- 仓库列表容器 -->
+    <!-- 仓库列表容器 (SSR 初始直出，无须等待客户端二次渲染) -->
     <div id="repos-container" class="repos-list">
-      <!-- 客户端脚本将动态渲染或由初始 SSR 占位 -->
+      {
+        initialRepos.map((repo, idx) => {
+          const rank = String(idx + 1).padStart(2, "0");
+          const isTop3 = idx < 3;
+          return (
+            <div class:list={["repo-card", { "is-top3": isTop3 }]}>
+              <div class="repo-header">
+                <span class="repo-rank" aria-label={`排名第 ${rank}`}>{rank}</span>
+                <div class="repo-title-wrap">
+                  <a href={repo.url} target="_blank" rel="noopener noreferrer" class="repo-link">
+                    <span class="repo-owner">{repo.owner}</span>
+                    <span class="repo-slash">/</span>
+                    <span class="repo-name">{repo.repo}</span>
+                  </a>
+                </div>
+              </div>
+
+              {repo.description && <p class="repo-desc">{repo.description}</p>}
+
+              <div class="repo-meta">
+                {repo.language && (
+                  <span class="meta-item repo-lang">
+                    <span class="lang-dot" style={{ backgroundColor: repo.langColor || "var(--accent)" }}></span>
+                    {repo.language}
+                  </span>
+                )}
+                <span class="meta-item repo-stars" title="总 Star 数">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  {formatNum(repo.stars)}
+                </span>
+                <span class="meta-item repo-forks" title="Fork 数">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                  {formatNum(repo.forks)}
+                </span>
+                {repo.todayStars > 0 && (
+                  <span class="meta-item repo-growth" title="本周 Star 新增">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                    +{formatNum(repo.todayStars)} 本周新增
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })
+      }
     </div>
   </article>
 
-  <!-- 序列化历史周次数据供客户端轻量渲染 -->
+  <!-- 序列化历史周次数据供客户端切换周次和语言筛选 -->
   <script is:inline id="trending-json" type="application/json" set:html={JSON.stringify(weeks)} />
 
-  <script is:inline>
-    (function () {
+  <script>
+    function setupTrending() {
       const dataEl = document.getElementById("trending-json");
-      if (!dataEl) return;
-      const weeks = JSON.parse(dataEl.textContent || "[]");
-      if (!weeks.length) return;
-
-      let currentWeekIndex = 0;
-      let currentLang = "";
-
-      const selectEl = document.getElementById("week-select");
       const reposContainer = document.getElementById("repos-container");
+      const selectEl = document.getElementById("week-select") as HTMLSelectElement | null;
       const langContainer = document.getElementById("lang-tags-container");
 
-      function formatNum(num) {
+      if (!dataEl || !reposContainer || !selectEl || !langContainer) return;
+
+      let weeks: any[] = [];
+      try {
+        weeks = JSON.parse(dataEl.textContent || "[]");
+      } catch {
+        return;
+      }
+      if (!weeks.length) return;
+
+      let currentWeekIndex = parseInt(selectEl.value, 10) || 0;
+      let currentLang = "";
+
+      function formatNum(num: number) {
         if (num >= 1000) {
           return (num / 1000).toFixed(1).replace(/\.0$/, "") + "k";
         }
         return String(num);
       }
 
-      function updateLanguageTags(repos) {
-        const langSet = new Set();
+      function escapeHtml(s: string) {
+        return (s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function updateLanguageTags(repos: any[]) {
+        const langSet = new Set<string>();
         repos.forEach((r) => {
           if (r.language) langSet.add(r.language);
         });
@@ -114,14 +198,18 @@ function formatDate(dateStr: string) {
         let html = `<button class="lang-tag ${currentLang === "" ? "active" : ""}" data-lang="">全部 (${repos.length})</button>`;
         langs.forEach((lang) => {
           const count = repos.filter((r) => r.language === lang).length;
-          html += `<button class="lang-tag ${currentLang === lang ? "active" : ""}" data-lang="${lang}">${lang} (${count})</button>`;
+          html += `<button class="lang-tag ${currentLang === lang ? "active" : ""}" data-lang="${escapeHtml(lang)}">${escapeHtml(lang)} (${count})</button>`;
         });
-        langContainer.innerHTML = html;
+        langContainer!.innerHTML = html;
 
-        langContainer.querySelectorAll(".lang-tag").forEach((btn) => {
+        bindLangTagEvents();
+      }
+
+      function bindLangTagEvents() {
+        langContainer!.querySelectorAll(".lang-tag").forEach((btn) => {
           btn.addEventListener("click", () => {
             currentLang = btn.getAttribute("data-lang") || "";
-            langContainer.querySelectorAll(".lang-tag").forEach((b) => b.classList.remove("active"));
+            langContainer!.querySelectorAll(".lang-tag").forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
             renderRepos();
           });
@@ -134,11 +222,11 @@ function formatDate(dateStr: string) {
 
         let filtered = week.repos || [];
         if (currentLang) {
-          filtered = filtered.filter((r) => r.language === currentLang);
+          filtered = filtered.filter((r: any) => r.language === currentLang);
         }
 
         if (!filtered.length) {
-          reposContainer.innerHTML = `
+          reposContainer!.innerHTML = `
             <div class="empty-state">
               <p>当前分类下暂无项目记录。</p>
             </div>
@@ -147,7 +235,7 @@ function formatDate(dateStr: string) {
         }
 
         let html = "";
-        filtered.forEach((repo, idx) => {
+        filtered.forEach((repo: any, idx: number) => {
           const rank = String(idx + 1).padStart(2, "0");
           const isTop3 = idx < 3;
           html += `
@@ -155,22 +243,22 @@ function formatDate(dateStr: string) {
               <div class="repo-header">
                 <span class="repo-rank" aria-label="排名第 ${rank}">${rank}</span>
                 <div class="repo-title-wrap">
-                  <a href="${repo.url}" target="_blank" rel="noopener noreferrer" class="repo-link">
-                    <span class="repo-owner">${repo.owner}</span>
+                  <a href="${escapeHtml(repo.url)}" target="_blank" rel="noopener noreferrer" class="repo-link">
+                    <span class="repo-owner">${escapeHtml(repo.owner)}</span>
                     <span class="repo-slash">/</span>
-                    <span class="repo-name">${repo.repo}</span>
+                    <span class="repo-name">${escapeHtml(repo.repo)}</span>
                   </a>
                 </div>
               </div>
 
-              ${repo.description ? `<p class="repo-desc">${repo.description}</p>` : ""}
+              ${repo.description ? `<p class="repo-desc">${escapeHtml(repo.description)}</p>` : ""}
 
               <div class="repo-meta">
                 ${
                   repo.language
                     ? `<span class="meta-item repo-lang">
-                        <span class="lang-dot" style="background-color: ${repo.langColor || "var(--accent)"}"></span>
-                        ${repo.language}
+                        <span class="lang-dot" style="background-color: ${escapeHtml(repo.langColor || "var(--accent)")}"></span>
+                        ${escapeHtml(repo.language)}
                       </span>`
                     : ""
                 }
@@ -195,24 +283,20 @@ function formatDate(dateStr: string) {
           `;
         });
 
-        reposContainer.innerHTML = html;
+        reposContainer!.innerHTML = html;
       }
 
-      if (selectEl) {
-        selectEl.addEventListener("change", (e) => {
-          currentWeekIndex = parseInt(e.target.value, 10) || 0;
-          currentLang = "";
-          updateLanguageTags(weeks[currentWeekIndex].repos || []);
-          renderRepos();
-        });
-      }
-
-      // 初始加载
-      if (weeks.length > 0) {
-        updateLanguageTags(weeks[0].repos || []);
+      selectEl.addEventListener("change", (e) => {
+        currentWeekIndex = parseInt((e.target as HTMLSelectElement).value, 10) || 0;
+        currentLang = "";
+        updateLanguageTags(weeks[currentWeekIndex].repos || []);
         renderRepos();
-      }
-    })();
+      });
+
+      bindLangTagEvents();
+    }
+
+    document.addEventListener("astro:page-load", setupTrending);
   </script>
 </Base>
 
