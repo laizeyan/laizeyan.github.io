@@ -746,6 +746,21 @@ img {
   ::view-transition-new(root) {
     animation-duration: 0.3s;
   }
+
+  /* 主题切换：圆形扩散水波纹遮罩特效 */
+  html.theme-transition::view-transition-old(root),
+  html.theme-transition::view-transition-new(root) {
+    animation: none !important;
+    mix-blend-mode: normal !important;
+  }
+
+  html.theme-transition::view-transition-old(root) {
+    z-index: 1;
+  }
+
+  html.theme-transition::view-transition-new(root) {
+    z-index: 9999;
+  }
 }
 
 /* ============================================================
