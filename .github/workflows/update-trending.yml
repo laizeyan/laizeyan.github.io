@@ -1,0 +1,52 @@
+name: Update GitHub Trending Data
+
+on:
+  schedule:
+    # 每周五 UTC 00:00 自动运行（北京时间上午 08:00）
+    - cron: "0 0 * * 5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-trending:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Fetch Trending data
+        run: node scripts/fetch-trending.js
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet src/data/trending-data.json; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/trending-data.json
+          git commit -m "chore(trending): update weekly github trending data [skip ci]"
+          git push

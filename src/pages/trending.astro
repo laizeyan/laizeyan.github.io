@@ -1,0 +1,493 @@
+---
+// src/pages/trending.astro
+import Base from "../layouts/Base.astro";
+import trendingRaw from "../data/trending-data.json";
+
+interface Repo {
+  owner: string;
+  repo: string;
+  url: string;
+  description: string;
+  language: string;
+  langColor: string;
+  stars: number;
+  forks: number;
+  todayStars: number;
+}
+
+interface WeekData {
+  weekId: string;
+  startDate: string;
+  endDate: string;
+  fetchedAt: string;
+  repos: Repo[];
+}
+
+const weeks: WeekData[] = (trendingRaw as { weeks: WeekData[] }).weeks || [];
+
+function formatDate(dateStr: string) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}月${d.getDate()}日`;
+}
+---
+
+<Base
+  title="GitHub 每周热榜 · Ze'Yan"
+  description="GitHub 每周排名前列的热门开源项目精选与技术趋势"
+>
+  <article class="prose trending-page reveal">
+    <header class="trending-head">
+      <div class="trending-head-accent" aria-hidden="true"></div>
+      <p class="section-kicker">开源周刊</p>
+      <h1>GitHub 热榜</h1>
+      <p class="lead">
+        每周精选 GitHub 增长最快的前沿开源项目，追踪全球技术浪潮与工程范式。
+      </p>
+    </header>
+
+    <hr class="rule" />
+
+    <!-- 交互筛选与周次选择栏 -->
+    <div class="trending-controls">
+      <div class="control-group">
+        <label for="week-select" class="control-label">选择周次</label>
+        <div class="select-wrapper">
+          <select id="week-select" class="trending-select" aria-label="选择历史周次">
+            {
+              weeks.map((w, idx) => (
+                <option value={idx}>
+                  {w.weekId} ({formatDate(w.startDate)} - {formatDate(w.endDate)})
+                </option>
+              ))
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- 语言过滤标签栏 -->
+      <div class="lang-filter-wrap">
+        <span class="control-label">语言筛选</span>
+        <div class="lang-tags" id="lang-tags-container">
+          <button class="lang-tag active" data-lang="">全部</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 仓库列表容器 -->
+    <div id="repos-container" class="repos-list">
+      <!-- 客户端脚本将动态渲染或由初始 SSR 占位 -->
+    </div>
+  </article>
+
+  <!-- 序列化历史周次数据供客户端轻量渲染 -->
+  <script is:inline id="trending-json" type="application/json" set:html={JSON.stringify(weeks)} />
+
+  <script is:inline>
+    (function () {
+      const dataEl = document.getElementById("trending-json");
+      if (!dataEl) return;
+      const weeks = JSON.parse(dataEl.textContent || "[]");
+      if (!weeks.length) return;
+
+      let currentWeekIndex = 0;
+      let currentLang = "";
+
+      const selectEl = document.getElementById("week-select");
+      const reposContainer = document.getElementById("repos-container");
+      const langContainer = document.getElementById("lang-tags-container");
+
+      function formatNum(num) {
+        if (num >= 1000) {
+          return (num / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+        }
+        return String(num);
+      }
+
+      function updateLanguageTags(repos) {
+        const langSet = new Set();
+        repos.forEach((r) => {
+          if (r.language) langSet.add(r.language);
+        });
+        const langs = Array.from(langSet).sort();
+
+        let html = `<button class="lang-tag ${currentLang === "" ? "active" : ""}" data-lang="">全部 (${repos.length})</button>`;
+        langs.forEach((lang) => {
+          const count = repos.filter((r) => r.language === lang).length;
+          html += `<button class="lang-tag ${currentLang === lang ? "active" : ""}" data-lang="${lang}">${lang} (${count})</button>`;
+        });
+        langContainer.innerHTML = html;
+
+        langContainer.querySelectorAll(".lang-tag").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            currentLang = btn.getAttribute("data-lang") || "";
+            langContainer.querySelectorAll(".lang-tag").forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderRepos();
+          });
+        });
+      }
+
+      function renderRepos() {
+        const week = weeks[currentWeekIndex];
+        if (!week) return;
+
+        let filtered = week.repos || [];
+        if (currentLang) {
+          filtered = filtered.filter((r) => r.language === currentLang);
+        }
+
+        if (!filtered.length) {
+          reposContainer.innerHTML = `
+            <div class="empty-state">
+              <p>当前分类下暂无项目记录。</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = "";
+        filtered.forEach((repo, idx) => {
+          const rank = String(idx + 1).padStart(2, "0");
+          const isTop3 = idx < 3;
+          html += `
+            <div class="repo-card ${isTop3 ? "is-top3" : ""}">
+              <div class="repo-header">
+                <span class="repo-rank" aria-label="排名第 ${rank}">${rank}</span>
+                <div class="repo-title-wrap">
+                  <a href="${repo.url}" target="_blank" rel="noopener noreferrer" class="repo-link">
+                    <span class="repo-owner">${repo.owner}</span>
+                    <span class="repo-slash">/</span>
+                    <span class="repo-name">${repo.repo}</span>
+                  </a>
+                </div>
+              </div>
+
+              ${repo.description ? `<p class="repo-desc">${repo.description}</p>` : ""}
+
+              <div class="repo-meta">
+                ${
+                  repo.language
+                    ? `<span class="meta-item repo-lang">
+                        <span class="lang-dot" style="background-color: ${repo.langColor || "var(--accent)"}"></span>
+                        ${repo.language}
+                      </span>`
+                    : ""
+                }
+                <span class="meta-item repo-stars" title="总 Star 数">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  ${formatNum(repo.stars)}
+                </span>
+                <span class="meta-item repo-forks" title="Fork 数">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><path d="M12 12v3"/></svg>
+                  ${formatNum(repo.forks)}
+                </span>
+                ${
+                  repo.todayStars
+                    ? `<span class="meta-item repo-growth" title="本周 Star 新增">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        +${formatNum(repo.todayStars)} 本周新增
+                      </span>`
+                    : ""
+                }
+              </div>
+            </div>
+          `;
+        });
+
+        reposContainer.innerHTML = html;
+      }
+
+      if (selectEl) {
+        selectEl.addEventListener("change", (e) => {
+          currentWeekIndex = parseInt(e.target.value, 10) || 0;
+          currentLang = "";
+          updateLanguageTags(weeks[currentWeekIndex].repos || []);
+          renderRepos();
+        });
+      }
+
+      // 初始加载
+      if (weeks.length > 0) {
+        updateLanguageTags(weeks[0].repos || []);
+        renderRepos();
+      }
+    })();
+  </script>
+</Base>
+
+<style>
+  .trending-page {
+    padding: 40px 0;
+  }
+
+  .trending-head {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .trending-head-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
+  .trending-head h1 {
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    margin: 8px 0 16px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .trending-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin: 28px 0 32px;
+    padding: 18px 20px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .control-label {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    min-width: 65px;
+  }
+
+  .select-wrapper {
+    position: relative;
+    flex: 1;
+    max-width: 380px;
+  }
+
+  .trending-select {
+    width: 100%;
+    padding: 7px 14px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    background-color: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--t-base) ease, box-shadow var(--t-base) ease;
+  }
+
+  .trending-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(180, 69, 46, 0.15);
+  }
+
+  .lang-filter-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .lang-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  :global(.lang-tag) {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    background-color: var(--bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all var(--t-fast) ease;
+  }
+
+  :global(.lang-tag:hover) {
+    color: var(--text);
+    border-color: var(--text-muted);
+    transform: translateY(-1px);
+  }
+
+  :global(.lang-tag.active) {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .repos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  :global(.repo-card) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 24px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--t-base) ease, box-shadow var(--t-base) ease,
+      border-left-color var(--t-base) ease;
+  }
+
+  :global(.repo-card:hover) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-left-color: var(--accent);
+  }
+
+  :global(.repo-card.is-top3) {
+    border-left-color: var(--accent);
+  }
+
+  :global(.repo-header) {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  :global(.repo-rank) {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 3px;
+    line-height: 1;
+  }
+
+  :global(.is-top3 .repo-rank) {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+    border-color: var(--accent);
+  }
+
+  :global(.repo-title-wrap) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  :global(.repo-link) {
+    font-family: "Noto Serif SC", var(--serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.3;
+    transition: color var(--t-fast) ease;
+  }
+
+  :global(.repo-link:hover) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  :global(.repo-owner) {
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  :global(.repo-slash) {
+    margin: 0 4px;
+    color: var(--border);
+  }
+
+  :global(.repo-desc) {
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0;
+  }
+
+  :global(.repo-meta) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  :global(.meta-item) {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  :global(.lang-dot) {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  :global(.repo-growth) {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  :global(.empty-state) {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    background-color: var(--bg-elevated);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+  }
+
+  @media (max-width: 640px) {
+    .control-group,
+    .lang-filter-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .select-wrapper {
+      max-width: 100%;
+    }
+
+    :global(.repo-header) {
+      gap: 10px;
+    }
+
+    :global(.repo-link) {
+      font-size: 1.1rem;
+    }
+  }
+</style>

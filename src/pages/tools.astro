@@ -1,0 +1,1336 @@
+---
+// src/pages/tools.astro
+import Base from "../layouts/Base.astro";
+
+const toolCategories = [
+  {
+    name: "数据转换",
+    tools: [
+      { id: "json", name: "JSON 格式化", icon: "{ }" },
+      { id: "base64", name: "Base64 编解码", icon: "64" },
+      { id: "url", name: "URL 编解码", icon: "%" },
+      { id: "unicode", name: "Unicode 转换", icon: "U+" },
+    ],
+  },
+  {
+    name: "时间与时区",
+    tools: [
+      { id: "timestamp", name: "时间戳转换", icon: "⏱" },
+    ],
+  },
+  {
+    name: "文本分析",
+    tools: [
+      { id: "wordcount", name: "字数与阅读统计", icon: "Aa" },
+      { id: "diff", name: "文本差异对比", icon: "±" },
+      { id: "regex", name: "正则表达式测试", icon: ".*" },
+    ],
+  },
+  {
+    name: "开发小件",
+    tools: [
+      { id: "avatar", name: "GitHub 像素头像", icon: "👾" },
+    ],
+  },
+];
+---
+
+<Base
+  title="实用工具箱 · Ze'Yan"
+  description="开箱即用的前端开发工具箱：JSON格式化、Base64/URL转换、时间戳、正则测试、文本对比等"
+>
+  <article class="prose tools-page reveal">
+    <header class="tools-head">
+      <div class="tools-head-accent" aria-hidden="true"></div>
+      <p class="section-kicker">开发者利器</p>
+      <h1>实用工具</h1>
+      <p class="lead">
+        轻量高效的纯前端开发工具套件，数据全在本地浏览器完成处理，零泄露风险。
+      </p>
+    </header>
+
+    <hr class="rule" />
+
+    <!-- 工具箱交互框架 -->
+    <div class="toolbox-layout">
+      <!-- 侧边 / 顶部工具快捷切换菜单 -->
+      <aside class="toolbox-sidebar" aria-label="工具列表">
+        {
+          toolCategories.map((cat) => (
+            <div class="tool-cat-group">
+              <span class="cat-title">{cat.name}</span>
+              <nav class="tool-nav">
+                {cat.tools.map((t) => (
+                  <button
+                    class="tool-btn"
+                    data-tool-target={t.id}
+                    id={`btn-${t.id}`}
+                    aria-label={t.name}
+                  >
+                    <span class="tool-icon" aria-hidden="true">{t.icon}</span>
+                    <span class="tool-name">{t.name}</span>
+                  </button>
+                ))}
+              </nav>
+            </div>
+          ))
+        }
+      </aside>
+
+      <!-- 工具主操作区 -->
+      <main class="toolbox-panel" id="toolbox-active-panel">
+        <!-- 1. JSON 格式化工具 -->
+        <section class="tool-section" id="section-json">
+          <div class="tool-header">
+            <h2>JSON 格式化与压缩</h2>
+            <div class="tool-actions">
+              <label class="action-label">
+                缩进
+                <select id="json-indent" class="select-sm">
+                  <option value="2">2 空格</option>
+                  <option value="4">4 空格</option>
+                  <option value="tabs">Tab</option>
+                </select>
+              </label>
+              <button class="btn btn-sm btn-primary" id="btn-json-format">格式化</button>
+              <button class="btn btn-sm btn-secondary" id="btn-json-minify">压缩单行</button>
+              <button class="btn btn-sm btn-secondary" id="btn-json-copy">复制结果</button>
+              <button class="btn btn-sm btn-outline" id="btn-json-clear">清空</button>
+            </div>
+          </div>
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">输入 JSON</span>
+              <textarea id="json-input" class="code-area" placeholder="在此粘贴或输入 JSON 数据..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">处理结果</span>
+              <pre id="json-output" class="code-area code-result"></pre>
+            </div>
+          </div>
+          <p id="json-status" class="status-msg"></p>
+        </section>
+
+        <!-- 2. Base64 编解码 -->
+        <section class="tool-section" id="section-base64" style="display: none;">
+          <div class="tool-header">
+            <h2>Base64 编解码 (支持 UTF-8)</h2>
+            <div class="tool-actions">
+              <button class="btn btn-sm btn-primary" id="btn-b64-encode">文本 ➔ Base64</button>
+              <button class="btn btn-sm btn-primary" id="btn-b64-decode">Base64 ➔ 文本</button>
+              <button class="btn btn-sm btn-secondary" id="btn-b64-copy">复制结果</button>
+              <button class="btn btn-sm btn-outline" id="btn-b64-clear">清空</button>
+            </div>
+          </div>
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">原始输入</span>
+              <textarea id="b64-input" class="code-area" placeholder="输入要编码的明文，或要解码的 Base64 字符串..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">转换输出</span>
+              <textarea id="b64-output" class="code-area" readonly placeholder="处理结果将在此显示..."></textarea>
+            </div>
+          </div>
+          <p id="b64-status" class="status-msg"></p>
+        </section>
+
+        <!-- 3. URL 编解码 -->
+        <section class="tool-section" id="section-url" style="display: none;">
+          <div class="tool-header">
+            <h2>URL 编解码</h2>
+            <div class="tool-actions">
+              <button class="btn btn-sm btn-primary" id="btn-url-encode">URL 编码 (encodeURIComponent)</button>
+              <button class="btn btn-sm btn-primary" id="btn-url-decode">URL 解码 (decodeURIComponent)</button>
+              <button class="btn btn-sm btn-secondary" id="btn-url-copy">复制结果</button>
+              <button class="btn btn-sm btn-outline" id="btn-url-clear">清空</button>
+            </div>
+          </div>
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">待处理 URL / 参数文本</span>
+              <textarea id="url-input" class="code-area" placeholder="输入 URL 或 query 字符串..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">转换结果</span>
+              <textarea id="url-output" class="code-area" readonly placeholder="输出结果..."></textarea>
+            </div>
+          </div>
+          <p id="url-status" class="status-msg"></p>
+        </section>
+
+        <!-- 4. Unicode 转换 -->
+        <section class="tool-section" id="section-unicode" style="display: none;">
+          <div class="tool-header">
+            <h2>Unicode 互转 (\\uXXXX)</h2>
+            <div class="tool-actions">
+              <button class="btn btn-sm btn-primary" id="btn-uni-to-u">文本 ➔ Unicode</button>
+              <button class="btn btn-sm btn-primary" id="btn-u-to-text">Unicode ➔ 文本</button>
+              <button class="btn btn-sm btn-secondary" id="btn-uni-copy">复制结果</button>
+              <button class="btn btn-sm btn-outline" id="btn-uni-clear">清空</button>
+            </div>
+          </div>
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">输入文本 / 编码</span>
+              <textarea id="uni-input" class="code-area" placeholder="输入中文或 \\u4e2d\\u6587..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">转换结果</span>
+              <textarea id="uni-output" class="code-area" readonly placeholder="输出结果..."></textarea>
+            </div>
+          </div>
+          <p id="uni-status" class="status-msg"></p>
+        </section>
+
+        <!-- 5. 时间戳与时区时钟 -->
+        <section class="tool-section" id="section-timestamp" style="display: none;">
+          <div class="tool-header">
+            <h2>时间戳转换与世界时钟</h2>
+          </div>
+
+          <!-- 当前时间戳看板 -->
+          <div class="timestamp-live-box">
+            <div class="clock-display">
+              <span class="clock-label">当前 Unix 时间戳 (秒)</span>
+              <span class="clock-val" id="live-ts-sec">--</span>
+            </div>
+            <div class="clock-display">
+              <span class="clock-label">毫秒 (ms)</span>
+              <span class="clock-val" id="live-ts-ms">--</span>
+            </div>
+            <button class="btn btn-sm btn-outline" id="btn-toggle-clock">暂停时钟</button>
+          </div>
+
+          <div class="time-convert-grid">
+            <div class="time-card">
+              <h3>时间戳 ➔ 北京时间 / ISO</h3>
+              <div class="input-row">
+                <input type="text" id="ts-to-date-input" class="input-text" placeholder="输入时间戳 (秒或毫秒)" />
+                <button class="btn btn-sm btn-primary" id="btn-ts-to-date">转换</button>
+              </div>
+              <div class="time-res-list" id="ts-to-date-res">
+                <p class="res-item"><span>北京时间:</span> <strong id="res-bj">--</strong></p>
+                <p class="res-item"><span>UTC 时间:</span> <strong id="res-utc">--</strong></p>
+                <p class="res-item"><span>ISO 8601:</span> <strong id="res-iso">--</strong></p>
+              </div>
+            </div>
+
+            <div class="time-card">
+              <h3>日期时间 ➔ 时间戳</h3>
+              <div class="input-row">
+                <input type="datetime-local" id="date-to-ts-input" class="input-text" step="1" />
+                <button class="btn btn-sm btn-primary" id="btn-date-to-ts">转换</button>
+              </div>
+              <div class="time-res-list">
+                <p class="res-item"><span>时间戳 (秒):</span> <strong id="res-sec">--</strong></p>
+                <p class="res-item"><span>时间戳 (毫秒):</span> <strong id="res-ms">--</strong></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. 字数与阅读统计 -->
+        <section class="tool-section" id="section-wordcount" style="display: none;">
+          <div class="tool-header">
+            <h2>字数与阅读统计</h2>
+            <div class="tool-actions">
+              <button class="btn btn-sm btn-outline" id="btn-wc-clear">清空</button>
+            </div>
+          </div>
+          <textarea id="wc-input" class="code-area wc-area" placeholder="在此输入或粘贴需要统计的文章正文或代码..."></textarea>
+          <div class="stat-badges">
+            <div class="stat-pill"><span class="pill-k">总字符 (含空格)</span><strong class="pill-v" id="stat-total-chars">0</strong></div>
+            <div class="stat-pill"><span class="pill-k">有效字符 (无空格)</span><strong class="pill-v" id="stat-non-space">0</strong></div>
+            <div class="stat-pill"><span class="pill-k">中文字符数</span><strong class="pill-v" id="stat-cjk">0</strong></div>
+            <div class="stat-pill"><span class="pill-k">英文单词数</span><strong class="pill-v" id="stat-words">0</strong></div>
+            <div class="stat-pill"><span class="pill-k">行数</span><strong class="pill-v" id="stat-lines">0</strong></div>
+            <div class="stat-pill"><span class="pill-k">预估阅读耗时</span><strong class="pill-v" id="stat-reading-time">0 分钟</strong></div>
+          </div>
+        </section>
+
+        <!-- 7. 文本差异对比 (Diff) -->
+        <section class="tool-section" id="section-diff" style="display: none;">
+          <div class="tool-header">
+            <h2>文本差异对比 (逐行比对)</h2>
+            <div class="tool-actions">
+              <button class="btn btn-sm btn-primary" id="btn-run-diff">比较差异</button>
+              <button class="btn btn-sm btn-outline" id="btn-diff-clear">清空</button>
+            </div>
+          </div>
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">原始文本 (Original)</span>
+              <textarea id="diff-original" class="code-area" placeholder="输入原始内容..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">修改后文本 (Modified)</span>
+              <textarea id="diff-modified" class="code-area" placeholder="输入修改后内容..."></textarea>
+            </div>
+          </div>
+          <div class="diff-viewer" id="diff-result">
+            <p class="diff-placeholder">点击「比较差异」开始对比左右两段文本。</p>
+          </div>
+        </section>
+
+        <!-- 8. 正则表达式测试器 -->
+        <section class="tool-section" id="section-regex" style="display: none;">
+          <div class="tool-header">
+            <h2>正则表达式测试器</h2>
+          </div>
+          <div class="regex-input-box">
+            <span class="regex-slash">/</span>
+            <input type="text" id="regex-pattern" class="regex-pattern-input" placeholder="输入正则表达式，如 ([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})" />
+            <span class="regex-slash">/</span>
+            <input type="text" id="regex-flags" class="regex-flags-input" value="g" placeholder="flags" title="修饰符：g, i, m, s" />
+          </div>
+
+          <div class="regex-presets">
+            <span class="preset-label">常用模板:</span>
+            <button class="preset-btn" data-reg="^1[3-9]\\d{9}$" data-flags="g">中国大陆手机号</button>
+            <button class="preset-btn" data-reg="[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}" data-flags="g">电子邮箱 Email</button>
+            <button class="preset-btn" data-reg="https?:\\/\\/[^\\s/$.?#].[^\\s]*" data-flags="gi">URL 网址</button>
+            <button class="preset-btn" data-reg="\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b" data-flags="g">IPv4 地址</button>
+            <button class="preset-btn" data-reg="[\\u4e00-\\u9fa5]+" data-flags="g">中文字符</button>
+          </div>
+
+          <div class="editor-grid">
+            <div class="editor-col">
+              <span class="col-kicker">测试匹配文本</span>
+              <textarea id="regex-text" class="code-area" placeholder="在此输入待匹配的测试文本..."></textarea>
+            </div>
+            <div class="editor-col">
+              <span class="col-kicker">匹配结果回显</span>
+              <div id="regex-matches-box" class="code-area code-result regex-results-box">
+                <p class="text-muted">等待测试...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. GitHub 像素头像生成器 (Identicon) -->
+        <section class="tool-section" id="section-avatar" style="display: none;">
+          <div class="tool-header">
+            <h2>GitHub 风格对称像素头像生成器</h2>
+          </div>
+          <div class="avatar-controls">
+            <input type="text" id="avatar-input" class="input-text" placeholder="输入任意文本、用户名或邮箱生成专属像素头像..." value="laizeyan" />
+            <button class="btn btn-sm btn-primary" id="btn-avatar-random">随机生成</button>
+            <button class="btn btn-sm btn-secondary" id="btn-avatar-download">下载 PNG</button>
+          </div>
+
+          <div class="avatar-preview-box">
+            <canvas id="avatar-canvas" width="240" height="240" class="avatar-canvas"></canvas>
+            <p class="avatar-hint">基于 5×5 轴对称哈希算法实时渲染，支持导出高清透明 PNG。</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </article>
+
+  <!-- 工具箱前端交互核心逻辑脚本 -->
+  <script is:inline>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Tab 切换逻辑
+      const toolButtons = document.querySelectorAll(".tool-btn");
+      const toolSections = document.querySelectorAll(".tool-section");
+
+      function activateTool(targetId) {
+        toolSections.forEach((sec) => (sec.style.display = "none"));
+        toolButtons.forEach((btn) => btn.classList.remove("active"));
+
+        const activeSec = document.getElementById(`section-${targetId}`);
+        const activeBtn = document.getElementById(`btn-${targetId}`);
+        if (activeSec) activeSec.style.display = "block";
+        if (activeBtn) activeBtn.classList.add("active");
+
+        // 更新 URL hash
+        history.replaceState(null, "", `#${targetId}`);
+      }
+
+      toolButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-tool-target");
+          if (target) activateTool(target);
+        });
+      });
+
+      // 默认激活路由对应工具或 JSON
+      const hash = window.location.hash.replace("#", "");
+      if (hash && document.getElementById(`section-${hash}`)) {
+        activateTool(hash);
+      } else {
+        activateTool("json");
+      }
+
+      // 复制工具通用提示
+      function showStatus(elemId, msg, isError = false) {
+        const el = document.getElementById(elemId);
+        if (!el) return;
+        el.textContent = msg;
+        el.className = `status-msg ${isError ? "status-err" : "status-ok"}`;
+        setTimeout(() => {
+          el.textContent = "";
+        }, 3000);
+      }
+
+      // ==========================================
+      // JSON 格式化逻辑
+      // ==========================================
+      const jsonIn = document.getElementById("json-input");
+      const jsonOut = document.getElementById("json-output");
+      const jsonIndent = document.getElementById("json-indent");
+
+      document.getElementById("btn-json-format")?.addEventListener("click", () => {
+        try {
+          if (!jsonIn.value.trim()) return;
+          const parsed = JSON.parse(jsonIn.value);
+          const space = jsonIndent.value === "tabs" ? "\t" : parseInt(jsonIndent.value, 10);
+          jsonOut.textContent = JSON.stringify(parsed, null, space);
+          showStatus("json-status", "格式化成功！");
+        } catch (e) {
+          showStatus("json-status", `JSON 语法错误: ${e.message}`, true);
+        }
+      });
+
+      document.getElementById("btn-json-minify")?.addEventListener("click", () => {
+        try {
+          if (!jsonIn.value.trim()) return;
+          const parsed = JSON.parse(jsonIn.value);
+          jsonOut.textContent = JSON.stringify(parsed);
+          showStatus("json-status", "压缩成功！");
+        } catch (e) {
+          showStatus("json-status", `JSON 语法错误: ${e.message}`, true);
+        }
+      });
+
+      document.getElementById("btn-json-copy")?.addEventListener("click", () => {
+        if (jsonOut.textContent) {
+          navigator.clipboard.writeText(jsonOut.textContent);
+          showStatus("json-status", "已复制格式化结果到剪贴板！");
+        }
+      });
+
+      document.getElementById("btn-json-clear")?.addEventListener("click", () => {
+        jsonIn.value = "";
+        jsonOut.textContent = "";
+      });
+
+      // ==========================================
+      // Base64 编解码 (UTF-8 安全)
+      // ==========================================
+      const b64In = document.getElementById("b64-input");
+      const b64Out = document.getElementById("b64-output");
+
+      document.getElementById("btn-b64-encode")?.addEventListener("click", () => {
+        try {
+          if (!b64In || !b64Out) return;
+          const bytes = new TextEncoder().encode(b64In.value);
+          const binString = Array.from(bytes, (b) => String.fromCharCode(b)).join("");
+          b64Out.value = btoa(binString);
+          showStatus("b64-status", "Base64 编码成功！");
+        } catch (e) {
+          showStatus("b64-status", `编码错误: ${e.message}`, true);
+        }
+      });
+
+      document.getElementById("btn-b64-decode")?.addEventListener("click", () => {
+        try {
+          if (!b64In || !b64Out) return;
+          const binString = atob(b64In.value.trim());
+          const bytes = Uint8Array.from(binString, (m) => m.charCodeAt(0));
+          b64Out.value = new TextDecoder().decode(bytes);
+          showStatus("b64-status", "Base64 解码成功！");
+        } catch {
+          showStatus("b64-status", "解码失败：输入内容不是合法的 Base64 字符串。", true);
+        }
+      });
+
+      document.getElementById("btn-b64-copy")?.addEventListener("click", () => {
+        if (b64Out.value) {
+          navigator.clipboard.writeText(b64Out.value);
+          showStatus("b64-status", "已复制到剪贴板！");
+        }
+      });
+
+      document.getElementById("btn-b64-clear")?.addEventListener("click", () => {
+        b64In.value = "";
+        b64Out.value = "";
+      });
+
+      // ==========================================
+      // URL 编解码
+      // ==========================================
+      const urlIn = document.getElementById("url-input");
+      const urlOut = document.getElementById("url-output");
+
+      document.getElementById("btn-url-encode")?.addEventListener("click", () => {
+        urlOut.value = encodeURIComponent(urlIn.value);
+        showStatus("url-status", "URL 编码完成！");
+      });
+
+      document.getElementById("btn-url-decode")?.addEventListener("click", () => {
+        try {
+          urlOut.value = decodeURIComponent(urlIn.value);
+          showStatus("url-status", "URL 解码完成！");
+        } catch (e) {
+          showStatus("url-status", `解码失败: ${e.message}`, true);
+        }
+      });
+
+      document.getElementById("btn-url-copy")?.addEventListener("click", () => {
+        if (urlOut.value) {
+          navigator.clipboard.writeText(urlOut.value);
+          showStatus("url-status", "已复制到剪贴板！");
+        }
+      });
+
+      document.getElementById("btn-url-clear")?.addEventListener("click", () => {
+        urlIn.value = "";
+        urlOut.value = "";
+      });
+
+      // ==========================================
+      // Unicode 转换
+      // ==========================================
+      const uniIn = document.getElementById("uni-input");
+      const uniOut = document.getElementById("uni-output");
+
+      document.getElementById("btn-uni-to-u")?.addEventListener("click", () => {
+        uniOut.value = uniIn.value
+          .split("")
+          .map((c) => {
+            const code = c.charCodeAt(0);
+            return code > 127 ? "\\u" + code.toString(16).padStart(4, "0") : c;
+          })
+          .join("");
+        showStatus("uni-status", "转为 Unicode 编码完成！");
+      });
+
+      document.getElementById("btn-u-to-text")?.addEventListener("click", () => {
+        try {
+          uniOut.value = uniIn.value.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
+            String.fromCharCode(parseInt(hex, 16))
+          );
+          showStatus("uni-status", "解码为中文文本完成！");
+        } catch (e) {
+          showStatus("uni-status", `转换失败: ${e.message}`, true);
+        }
+      });
+
+      document.getElementById("btn-uni-copy")?.addEventListener("click", () => {
+        if (uniOut.value) {
+          navigator.clipboard.writeText(uniOut.value);
+          showStatus("uni-status", "已复制到剪贴板！");
+        }
+      });
+
+      document.getElementById("btn-uni-clear")?.addEventListener("click", () => {
+        uniIn.value = "";
+        uniOut.value = "";
+      });
+
+      // ==========================================
+      // 时间戳实时时钟与双向转换
+      // ==========================================
+      const liveSec = document.getElementById("live-ts-sec");
+      const liveMs = document.getElementById("live-ts-ms");
+      let clockRunning = true;
+
+      function updateLiveClock() {
+        if (!clockRunning) return;
+        const now = Date.now();
+        if (liveSec) liveSec.textContent = Math.floor(now / 1000).toString();
+        if (liveMs) liveMs.textContent = now.toString();
+      }
+      setInterval(updateLiveClock, 500);
+      updateLiveClock();
+
+      document.getElementById("btn-toggle-clock")?.addEventListener("click", (e) => {
+        clockRunning = !clockRunning;
+        e.target.textContent = clockRunning ? "暂停时钟" : "恢复时钟";
+      });
+
+      // 时间戳 -> 日期
+      document.getElementById("btn-ts-to-date")?.addEventListener("click", () => {
+        const val = document.getElementById("ts-to-date-input").value.trim();
+        if (!val) return;
+        let ts = parseInt(val, 10);
+        if (val.length === 10) ts *= 1000;
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) return;
+
+        document.getElementById("res-bj").textContent = d.toLocaleString("zh-CN", {
+          timeZone: "Asia/Shanghai",
+          hour12: false,
+        });
+        document.getElementById("res-utc").textContent = d.toUTCString();
+        document.getElementById("res-iso").textContent = d.toISOString();
+      });
+
+      // 日期 -> 时间戳
+      document.getElementById("btn-date-to-ts")?.addEventListener("click", () => {
+        const val = document.getElementById("date-to-ts-input").value;
+        if (!val) return;
+        const d = new Date(val);
+        const ms = d.getTime();
+        document.getElementById("res-sec").textContent = Math.floor(ms / 1000);
+        document.getElementById("res-ms").textContent = ms;
+      });
+
+      // ==========================================
+      // 字数统计与阅读估时
+      // ==========================================
+      const wcIn = document.getElementById("wc-input");
+      function calcWordCount() {
+        const str = wcIn.value;
+        const totalChars = str.length;
+        const nonSpace = str.replace(/\s/g, "").length;
+        const cjk = (str.match(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
+        const words = (str.match(/[a-zA-Z0-9_-]+/g) || []).length;
+        const lines = str ? str.split(/\r\n|\r|\n/).length : 0;
+        const estMin = Math.ceil((cjk + words) / 350);
+
+        document.getElementById("stat-total-chars").textContent = totalChars;
+        document.getElementById("stat-non-space").textContent = nonSpace;
+        document.getElementById("stat-cjk").textContent = cjk;
+        document.getElementById("stat-words").textContent = words;
+        document.getElementById("stat-lines").textContent = lines;
+        document.getElementById("stat-reading-time").textContent = `${estMin} 分钟`;
+      }
+      wcIn?.addEventListener("input", calcWordCount);
+      document.getElementById("btn-wc-clear")?.addEventListener("click", () => {
+        wcIn.value = "";
+        calcWordCount();
+      });
+
+      // ==========================================
+      // 文本差异对比 (Diff)
+      // ==========================================
+      document.getElementById("btn-run-diff")?.addEventListener("click", () => {
+        const orig = document.getElementById("diff-original").value.split("\n");
+        const mod = document.getElementById("diff-modified").value.split("\n");
+        const resBox = document.getElementById("diff-result");
+
+        let html = '<div class="diff-lines">';
+        const max = Math.max(orig.length, mod.length);
+        for (let i = 0; i < max; i++) {
+          const l1 = orig[i];
+          const l2 = mod[i];
+          if (l1 === undefined) {
+            html += `<div class="diff-line diff-add"><span class="diff-num">+</span>${escapeHtml(l2)}</div>`;
+          } else if (l2 === undefined) {
+            html += `<div class="diff-line diff-del"><span class="diff-num">-</span>${escapeHtml(l1)}</div>`;
+          } else if (l1 === l2) {
+            html += `<div class="diff-line diff-eq"><span class="diff-num"> </span>${escapeHtml(l1)}</div>`;
+          } else {
+            html += `<div class="diff-line diff-del"><span class="diff-num">-</span>${escapeHtml(l1)}</div>`;
+            html += `<div class="diff-line diff-add"><span class="diff-num">+</span>${escapeHtml(l2)}</div>`;
+          }
+        }
+        html += "</div>";
+        resBox.innerHTML = html;
+      });
+
+      function escapeHtml(s) {
+        return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      }
+
+      document.getElementById("btn-diff-clear")?.addEventListener("click", () => {
+        document.getElementById("diff-original").value = "";
+        document.getElementById("diff-modified").value = "";
+        document.getElementById("diff-result").innerHTML = '<p class="diff-placeholder">点击「比较差异」开始对比。</p>';
+      });
+
+      // ==========================================
+      // 正则表达式测试
+      // ==========================================
+      const regPattern = document.getElementById("regex-pattern");
+      const regFlags = document.getElementById("regex-flags");
+      const regText = document.getElementById("regex-text");
+      const regBox = document.getElementById("regex-matches-box");
+
+      function runRegex() {
+        const pattern = regPattern.value;
+        const flags = regFlags.value;
+        const text = regText.value;
+
+        if (!pattern || !text) {
+          regBox.innerHTML = '<p class="text-muted">请输入正则表达式和测试文本...</p>';
+          return;
+        }
+
+        try {
+          const reg = new RegExp(pattern, flags);
+          let matches = [];
+          if (flags.includes("g")) {
+            let m;
+            while ((m = reg.exec(text)) !== null) {
+              matches.push({ match: m[0], index: m.index, groups: m.slice(1) });
+              if (reg.lastIndex === m.index) reg.lastIndex++;
+            }
+          } else {
+            const m = reg.exec(text);
+            if (m) matches.push({ match: m[0], index: m.index, groups: m.slice(1) });
+          }
+
+          if (matches.length === 0) {
+            regBox.innerHTML = '<p class="status-msg status-err">未匹配到任何结果。</p>';
+            return;
+          }
+
+          let outHtml = `<div class="match-summary">匹配到 <strong>${matches.length}</strong> 处结果:</div>`;
+          matches.forEach((item, idx) => {
+            outHtml += `
+              <div class="match-card">
+                <span class="match-idx">#${idx + 1}</span>
+                <span class="match-str">${escapeHtml(item.match)}</span>
+                ${item.groups.length ? `<span class="match-groups">捕获组: [${item.groups.map((g) => `"${escapeHtml(g)}"`).join(", ")}]</span>` : ""}
+              </div>
+            `;
+          });
+          regBox.innerHTML = outHtml;
+        } catch (e) {
+          regBox.innerHTML = `<p class="status-msg status-err">正则表达式语法错误: ${e.message}</p>`;
+        }
+      }
+
+      regPattern?.addEventListener("input", runRegex);
+      regFlags?.addEventListener("input", runRegex);
+      regText?.addEventListener("input", runRegex);
+
+      document.querySelectorAll(".preset-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          regPattern.value = btn.getAttribute("data-reg");
+          regFlags.value = btn.getAttribute("data-flags");
+          runRegex();
+        });
+      });
+
+      // ==========================================
+      // GitHub 像素头像生成器 (Identicon 5x5 对称算法)
+      // ==========================================
+      const avInput = document.getElementById("avatar-input");
+      const canvas = document.getElementById("avatar-canvas");
+
+      function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = (hash << 5) - hash + str.charCodeAt(i);
+          hash |= 0;
+        }
+        return Math.abs(hash);
+      }
+
+      function renderAvatar() {
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        const val = avInput.value.trim() || "guest";
+        const hash = hashString(val);
+
+        // 主色调取 HSL
+        const hue = hash % 360;
+        const fgColor = `hsl(${hue}, 65%, 45%)`;
+        const bgColor = "#f7f5ed";
+
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const gridSize = 5;
+        const cellSize = canvas.width / (gridSize + 2); // 留出 1 cell 内边距
+        ctx.fillStyle = fgColor;
+
+        // 生成 5x5 对称点阵 (只需算左侧 3 列)
+        for (let r = 0; r < gridSize; r++) {
+          for (let c = 0; c < Math.ceil(gridSize / 2); c++) {
+            const bit = (hash >> (r * 3 + c)) & 1;
+            if (bit === 1) {
+              const x1 = (c + 1) * cellSize;
+              const x2 = (gridSize - c) * cellSize;
+              const y = (r + 1) * cellSize;
+              ctx.fillRect(x1, y, cellSize, cellSize);
+              ctx.fillRect(x2, y, cellSize, cellSize);
+            }
+          }
+        }
+      }
+
+      avInput?.addEventListener("input", renderAvatar);
+      document.getElementById("btn-avatar-random")?.addEventListener("click", () => {
+        avInput.value = "user-" + Math.random().toString(36).substring(2, 8);
+        renderAvatar();
+      });
+
+      document.getElementById("btn-avatar-download")?.addEventListener("click", () => {
+        if (!canvas) return;
+        const link = document.createElement("a");
+        link.download = `avatar-${avInput.value || "identicon"}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+
+      renderAvatar();
+    });
+  </script>
+</Base>
+
+<style>
+  .tools-page {
+    padding: 40px 0;
+  }
+
+  .tools-head {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .tools-head-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-2) 100%);
+    border-radius: 2px;
+  }
+
+  .tools-head h1 {
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    margin: 8px 0 16px;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .toolbox-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+    margin-top: 28px;
+    align-items: start;
+  }
+
+  .toolbox-sidebar {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 14px;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 80px;
+  }
+
+  .tool-cat-group {
+    margin-bottom: 20px;
+  }
+
+  .tool-cat-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .cat-title {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 8px 6px;
+    border-bottom: 1px dashed var(--border);
+    margin-bottom: 6px;
+  }
+
+  .tool-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--t-fast) ease;
+  }
+
+  .tool-btn:hover {
+    background-color: var(--bg);
+    border-color: var(--border);
+  }
+
+  .tool-btn.active {
+    background-color: var(--bg);
+    border-color: var(--border);
+    border-left: 3px solid var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tool-icon {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 700;
+    width: 22px;
+    text-align: center;
+    color: var(--accent-2);
+  }
+
+  /* 操作面板 */
+  .toolbox-panel {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    box-shadow: var(--shadow-sm);
+    min-height: 520px;
+  }
+
+  .tool-section h2 {
+    font-size: 1.4rem;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .tool-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--text);
+    margin-bottom: 20px;
+  }
+
+  .tool-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all var(--t-fast) ease;
+    line-height: 1.4;
+  }
+
+  .btn-primary {
+    background-color: var(--accent);
+    color: var(--accent-contrast);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    background-color: var(--bg);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text-muted);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border);
+  }
+
+  .btn-outline:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  .editor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .editor-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .col-kicker {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .code-area {
+    width: 100%;
+    height: 320px;
+    padding: 12px 14px;
+    background-color: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: "JetBrains Mono", Consolas, Menlo, monospace;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: border-color var(--t-base) ease;
+  }
+
+  .code-area:focus {
+    border-color: var(--accent);
+  }
+
+  .code-result {
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .status-msg {
+    margin-top: 10px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .status-ok {
+    color: #2e7d32;
+  }
+
+  .status-err {
+    color: var(--accent);
+  }
+
+  /* 时间戳样式 */
+  .timestamp-live-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+  }
+
+  .clock-display {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .clock-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--sans);
+  }
+
+  .clock-val {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .time-convert-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .time-card {
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+
+  .time-card h3 {
+    font-size: 1.05rem;
+    margin: 0 0 14px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .input-text {
+    flex: 1;
+    padding: 8px 12px;
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--text);
+    outline: none;
+  }
+
+  .input-text:focus {
+    border-color: var(--accent);
+  }
+
+  .time-res-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+  }
+
+  .res-item span {
+    color: var(--text-muted);
+    min-width: 80px;
+    display: inline-block;
+  }
+
+  .res-item strong {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--text);
+  }
+
+  /* 字数统计 */
+  .wc-area {
+    height: 240px;
+  }
+
+  .stat-badges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .stat-pill {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 14px;
+  }
+
+  .pill-k {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .pill-v {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.25rem;
+    color: var(--accent);
+  }
+
+  /* Diff 比对器 */
+  .diff-viewer {
+    margin-top: 14px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+
+  .diff-line {
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .diff-num {
+    display: inline-block;
+    width: 20px;
+    font-weight: 700;
+  }
+
+  .diff-add {
+    background-color: rgba(46, 125, 50, 0.12);
+    color: #2e7d32;
+  }
+
+  .diff-del {
+    background-color: rgba(180, 69, 46, 0.12);
+    color: var(--accent);
+  }
+
+  /* 正则测试器 */
+  .regex-input-box {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: "JetBrains Mono", monospace;
+    margin-bottom: 12px;
+  }
+
+  .regex-slash {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .regex-pattern-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    outline: none;
+    color: var(--text);
+  }
+
+  .regex-flags-input {
+    width: 60px;
+    border: none;
+    background: transparent;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 0.92rem;
+    outline: none;
+    color: var(--text-muted);
+  }
+
+  .regex-presets {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .preset-label {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .preset-btn {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .preset-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .match-summary {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+  }
+
+  .match-card {
+    padding: 6px 8px;
+    background-color: var(--bg-elevated);
+    border-left: 2px solid var(--accent);
+    margin-bottom: 6px;
+    font-size: 0.84rem;
+  }
+
+  .match-idx {
+    font-weight: 700;
+    color: var(--accent);
+    margin-right: 8px;
+  }
+
+  /* 像素头像生成器 */
+  .avatar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .avatar-preview-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 40px 20px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .avatar-canvas {
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    background-color: #fff;
+  }
+
+  .avatar-hint {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .toolbox-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .editor-grid,
+    .time-convert-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .toolbox-sidebar {
+      position: static;
+    }
+
+    .tool-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn {
+      width: auto;
+    }
+  }
+</style>
