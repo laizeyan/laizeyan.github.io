@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import Giscus from "../../components/Giscus.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => !data.draft);
@@ -158,6 +159,8 @@ const updated =
         </section>
       )
     }
+
+    <Giscus />
   </article>
 </Base>
 

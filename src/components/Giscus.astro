@@ -1,0 +1,121 @@
+---
+// src/components/Giscus.astro
+// 基于 GitHub Discussions 的轻量零服务评论系统，支持明暗主题动态跟随
+---
+
+<section class="comments-section reveal" aria-label="评论与讨论">
+  <div class="comments-header">
+    <p class="section-kicker">读者讨论</p>
+    <h2 class="comments-title">交流与反馈</h2>
+    <p class="comments-lead">
+      欢迎留下你的想法或建议。评论基于 GitHub Discussions 存储，登录 GitHub 即可参与。
+    </p>
+  </div>
+
+  <div class="giscus-container">
+    <div class="giscus"></div>
+  </div>
+</section>
+
+<script>
+  function getGiscusTheme(): string {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    return isDark ? "dark_dimmed" : "light";
+  }
+
+  function sendThemeToGiscus(theme: string) {
+    const iframe = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
+    if (!iframe || !iframe.contentWindow) return;
+    iframe.contentWindow.postMessage(
+      {
+        giscus: {
+          setConfig: {
+            theme,
+          },
+        },
+      },
+      "https://giscus.app"
+    );
+  }
+
+  function initGiscus() {
+    const container = document.querySelector(".giscus-container .giscus");
+    if (!container) return;
+
+    // 清理可能存在的旧 iframe 避免 View Transitions 页面切换重复创建
+    container.innerHTML = "";
+
+    const theme = getGiscusTheme();
+
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", "laizeyan/laizeyan.github.io");
+    script.setAttribute("data-repo-id", "R_kgDOUFxC9A");
+    script.setAttribute("data-category", "General");
+    script.setAttribute("data-category-id", "DIC_kwDOUFxC9M4DIr7g");
+    script.setAttribute("data-mapping", "pathname");
+    script.setAttribute("data-strict", "0");
+    script.setAttribute("data-reactions-enabled", "1");
+    script.setAttribute("data-emit-metadata", "0");
+    script.setAttribute("data-input-position", "top");
+    script.setAttribute("data-theme", theme);
+    script.setAttribute("data-lang", "zh-CN");
+    script.setAttribute("data-loading", "lazy");
+    script.crossOrigin = "anonymous";
+    script.async = true;
+
+    container.appendChild(script);
+  }
+
+  // 监听主题属性变化，实时向 Giscus iframe 同步主题
+  const themeObserver = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      if (m.type === "attributes" && m.attributeName === "data-theme") {
+        sendThemeToGiscus(getGiscusTheme());
+      }
+    }
+  });
+
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+
+  document.addEventListener("astro:page-load", initGiscus);
+</script>
+
+<style>
+  .comments-section {
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 2px solid var(--text);
+  }
+
+  .comments-header {
+    margin-bottom: 24px;
+  }
+
+  .comments-title {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    margin: 4px 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .comments-lead {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .giscus-container {
+    min-height: 200px;
+  }
+
+  @media (max-width: 640px) {
+    .comments-section {
+      margin-top: 40px;
+      padding-top: 24px;
+    }
+  }
+</style>
