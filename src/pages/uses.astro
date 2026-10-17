@@ -19,6 +19,7 @@ const gear = [
       { k: "系统", v: "Arch Linux + Hyprland 平铺窗口管理" },
       { k: "编辑器", v: "Neovim (LazyVim) + VS Code，共用一套配色" },
       { k: "终端", v: "zsh + bash，多套终端配置（alacritty/foot/ghostty/kitty）" },
+      { k: "包管理", v: "uv (Python) + pnpm / bun (Node.js)，遵循严格虚拟环境与锁文件隔离" },
       { k: "字体", v: "正文字体霞鹜文楷，代码 JetBrains Mono" },
       { k: "浏览器", v: "日常 Firefox，调试用 Chromium" },
       { k: "笔记", v: "纯文本 + Git 管理的本地知识库" },
@@ -27,20 +28,21 @@ const gear = [
   {
     group: "AI 工具",
     items: [
-      { k: "编码助手", v: "opencode + Codex + Claude Code，多 Agent 协作" },
-      { k: "智能体", v: "Hermes Agent 用于代码审查与长任务拆步" },
-      { k: "工具链", v: "mise 管理 Node/Go/Rust/Python 版本，统一环境" },
-      { k: "版本控制", v: "Git + GitHub SSH，gh CLI 管理 PR/Issue" },
+      { k: "编码助手", v: "Antigravity CLI + OpenCode + Codex，多 Agent 协作" },
+      { k: "智能体", v: "Hermes Agent 用于长任务拆步、代码审查与架构自检" },
+      { k: "工具链", v: "mise 管理 Node/Go/Rust/Python 版本，统一工程环境" },
+      { k: "版本控制", v: "Git + GitHub SSH，gh CLI 管理 PR/Issue 与 CI 运行" },
     ],
   },
   {
-    group: "服务",
+    group: "服务与框架",
     items: [
+      { k: "站点框架", v: "Astro 7 (SSG 静态生成) + 原生 View Transitions" },
       { k: "托管", v: "GitHub Pages 部署个人站点" },
       { k: "域名", v: "laizeyan.github.io（用户页）" },
-      { k: "搜索", v: "Pagefind 站内全文检索" },
-      { k: "CI", v: "GitHub Actions 自动构建与部署" },
-      { k: "订阅", v: "RSS 输出，零第三方追踪" },
+      { k: "搜索", v: "Pagefind 构建期静态全文检索，零运行时侵入" },
+      { k: "CI/CD", v: "GitHub Actions 自动构建部署与每周热榜定时爬取" },
+      { k: "订阅", v: "RSS 输出与站点地图，零第三方隐私追踪" },
     ],
   },
 ];
