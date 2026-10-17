@@ -729,6 +729,97 @@ pre code {
   background: transparent;
 }
 
+/* ---- 代码块卡片化包装与工具条 ---- */
+.code-block-wrapper {
+  position: relative;
+  margin: 1.8em 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.code-block-wrapper pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background-color: transparent !important;
+  padding: 14px 18px;
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+.code-lang {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.code-lang::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.code-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  line-height: 1.2;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--t-base) ease;
+}
+
+.code-copy-btn:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background-color: var(--bg);
+}
+
+.code-copy-btn.copied {
+  color: #0d9488;
+  border-color: #0d9488;
+  background-color: rgba(13, 148, 136, 0.08);
+}
+
+[data-theme="dark"] .code-copy-btn.copied {
+  color: #34d399;
+  border-color: #34d399;
+  background-color: rgba(52, 211, 153, 0.12);
+}
+
+.code-copy-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
 img {
   max-width: 100%;
   height: auto;

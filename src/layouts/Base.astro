@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import CodeCopy from "../components/CodeCopy.astro";
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 
@@ -145,5 +146,6 @@ const {
         });
       })();
     </script>
+    <CodeCopy />
   </body>
 </html>

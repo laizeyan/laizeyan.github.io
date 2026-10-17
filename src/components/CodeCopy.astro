@@ -1,0 +1,89 @@
+---
+// src/components/CodeCopy.astro
+// 全局 Markdown 代码块交互增强：注入语言标识角标与报刊质感的一键复制按钮
+---
+
+<script>
+  function setupCodeBlocks() {
+    const codeBlocks = document.querySelectorAll<HTMLElement>(
+      "article pre.astro-code, .post-body pre, .project pre, .prose pre"
+    );
+
+    codeBlocks.forEach((pre) => {
+      // 避免重复包装
+      if (pre.closest(".code-block-wrapper")) return;
+
+      const rawLang =
+        pre.getAttribute("data-language") ||
+        pre.className.match(/language-(\w+)/)?.[1] ||
+        "";
+      const displayLang = (rawLang || "code").toUpperCase();
+
+      // 创建外层包装卡片
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block-wrapper";
+
+      // 创建报刊风格顶部工具条
+      const header = document.createElement("div");
+      header.className = "code-block-header";
+
+      const langSpan = document.createElement("span");
+      langSpan.className = "code-lang";
+      langSpan.textContent = displayLang;
+
+      const copyBtn = document.createElement("button");
+      copyBtn.type = "button";
+      copyBtn.className = "code-copy-btn";
+      copyBtn.setAttribute("aria-label", "复制代码");
+      copyBtn.setAttribute("title", "复制代码到剪贴板");
+      copyBtn.innerHTML = `
+        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+        </svg>
+        <span class="btn-text">复制</span>
+      `;
+
+      let resetTimer: number | null = null;
+      copyBtn.addEventListener("click", async () => {
+        try {
+          const codeEl = pre.querySelector("code");
+          const textToCopy = (codeEl ? codeEl.innerText : pre.innerText).replace(/\n$/, "");
+          await navigator.clipboard.writeText(textToCopy);
+
+          copyBtn.classList.add("copied");
+          copyBtn.innerHTML = `
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span class="btn-text">已复制</span>
+          `;
+
+          if (resetTimer) clearTimeout(resetTimer);
+          resetTimer = window.setTimeout(() => {
+            copyBtn.classList.remove("copied");
+            copyBtn.innerHTML = `
+              <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+              </svg>
+              <span class="btn-text">复制</span>
+            `;
+          }, 2000);
+        } catch (err) {
+          console.error("复制失败:", err);
+        }
+      });
+
+      header.appendChild(langSpan);
+      header.appendChild(copyBtn);
+
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(header);
+      wrapper.appendChild(pre);
+    });
+  }
+
+  // 响应初次加载与 View Transitions 页面切换
+  document.addEventListener("astro:page-load", setupCodeBlocks);
+</script>
