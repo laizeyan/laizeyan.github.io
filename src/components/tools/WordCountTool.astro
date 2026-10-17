@@ -1,0 +1,32 @@
+---
+// src/components/tools/WordCountTool.astro
+---
+
+<section class="tool-section" id="section-wordcount" style="display: none;">
+  <div class="tool-header">
+    <h2>字数与阅读统计</h2>
+    <div class="tool-actions">
+      <label class="btn btn-sm btn-outline file-btn-label">
+        导入文本文件
+        <input type="file" id="wc-file-input" accept=".txt,.md,.json,.js,.ts" style="display:none;" />
+      </label>
+      <button class="btn btn-sm btn-secondary" id="btn-wc-sample">填入示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-wc-clear">清空</button>
+    </div>
+  </div>
+  <div class="pane-header">
+    <span class="pane-tag">TEXT</span>
+    <span class="col-kicker">统计文本</span>
+    <span class="pane-stats" id="wc-input-stats"></span>
+  </div>
+  <textarea id="wc-input" class="code-area wc-area" placeholder="在此输入或粘贴需要统计的文章正文或代码..."></textarea>
+  <div class="stat-badges">
+    <div class="stat-pill"><span class="pill-k">总字符 (含空格)</span><strong class="pill-v" id="stat-total-chars">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">有效字符 (无空格)</span><strong class="pill-v" id="stat-non-space">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">中文字符数</span><strong class="pill-v" id="stat-cjk">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">英文单词数</span><strong class="pill-v" id="stat-words">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">行数</span><strong class="pill-v" id="stat-lines">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">段落数</span><strong class="pill-v" id="stat-paragraphs">0</strong></div>
+    <div class="stat-pill"><span class="pill-k">预估阅读耗时</span><strong class="pill-v" id="stat-reading-time">0 分钟</strong></div>
+  </div>
+</section>

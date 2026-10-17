@@ -1,0 +1,37 @@
+---
+// src/components/tools/DiffTool.astro
+---
+
+<section class="tool-section" id="section-diff" style="display: none;">
+  <div class="tool-header">
+    <h2>文本差异对比 (逐行比对)</h2>
+    <div class="tool-actions">
+      <button class="btn btn-sm btn-primary" id="btn-run-diff">比较差异</button>
+      <button class="btn btn-sm btn-secondary" id="btn-diff-sample">填入对比示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-diff-clear">清空</button>
+      <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
+    </div>
+  </div>
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">ORIGINAL</span>
+        <span class="col-kicker">原始文本</span>
+        <span class="pane-stats" id="diff-orig-stats"></span>
+      </div>
+      <textarea id="diff-original" class="code-area" placeholder="输入原始内容，或点击上方「填入对比示例」..."></textarea>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">MODIFIED</span>
+        <span class="col-kicker">修改后文本</span>
+        <span class="pane-stats" id="diff-mod-stats"></span>
+      </div>
+      <textarea id="diff-modified" class="code-area" placeholder="输入修改后内容..."></textarea>
+    </div>
+  </div>
+  <div class="diff-summary-bar" id="diff-summary"></div>
+  <div class="diff-viewer" id="diff-result">
+    <p class="diff-placeholder">点击「比较差异」开始对比左右两段文本。</p>
+  </div>
+</section>

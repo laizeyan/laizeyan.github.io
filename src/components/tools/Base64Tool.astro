@@ -1,0 +1,40 @@
+---
+// src/components/tools/Base64Tool.astro
+---
+
+<section class="tool-section" id="section-base64" style="display: none;">
+  <div class="tool-header">
+    <h2>Base64 编解码 (支持 UTF-8)</h2>
+    <div class="tool-actions">
+      <button class="btn btn-sm btn-primary" id="btn-b64-encode">文本 ➔ Base64</button>
+      <button class="btn btn-sm btn-primary" id="btn-b64-decode">Base64 ➔ 文本</button>
+      <button class="btn btn-sm btn-secondary" id="btn-b64-copy">复制结果</button>
+      <label class="btn btn-sm btn-outline file-btn-label">
+        导入文件转 Base64
+        <input type="file" id="b64-file-input" style="display:none;" />
+      </label>
+      <button class="btn btn-sm btn-outline" id="btn-b64-sample">示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-b64-clear">清空</button>
+      <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
+    </div>
+  </div>
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">INPUT</span>
+        <span class="col-kicker">原始输入</span>
+        <span class="pane-stats" id="b64-input-stats"></span>
+      </div>
+      <textarea id="b64-input" class="code-area" placeholder="输入要编码的明文，或要解码的 Base64 字符串..."></textarea>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">OUTPUT</span>
+        <span class="col-kicker">转换输出</span>
+        <span class="pane-stats" id="b64-output-stats"></span>
+      </div>
+      <textarea id="b64-output" class="code-area" readonly placeholder="处理结果将在此显示..."></textarea>
+    </div>
+  </div>
+  <p id="b64-status" class="status-msg"></p>
+</section>

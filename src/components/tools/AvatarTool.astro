@@ -1,0 +1,19 @@
+---
+// src/components/tools/AvatarTool.astro
+---
+
+<section class="tool-section" id="section-avatar" style="display: none;">
+  <div class="tool-header">
+    <h2>GitHub 风格对称像素头像生成器</h2>
+  </div>
+  <div class="avatar-controls">
+    <input type="text" id="avatar-input" class="input-text" placeholder="输入任意文本、用户名或邮箱生成专属像素头像..." value="laizeyan" />
+    <button class="btn btn-sm btn-primary" id="btn-avatar-random">随机生成</button>
+    <button class="btn btn-sm btn-secondary" id="btn-avatar-download">下载 PNG</button>
+  </div>
+
+  <div class="avatar-preview-box">
+    <canvas id="avatar-canvas" width="240" height="240" class="avatar-canvas"></canvas>
+    <p class="avatar-hint">基于 5×5 轴对称哈希算法实时渲染，支持导出高清透明 PNG。</p>
+  </div>
+</section>

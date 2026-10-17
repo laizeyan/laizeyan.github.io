@@ -1,0 +1,36 @@
+---
+// src/components/tools/UnicodeTool.astro
+---
+
+<section class="tool-section" id="section-unicode" style="display: none;">
+  <div class="tool-header">
+    <h2>Unicode 互转 (\\uXXXX)</h2>
+    <div class="tool-actions">
+      <button class="btn btn-sm btn-primary" id="btn-uni-to-u">文本 ➔ Unicode</button>
+      <button class="btn btn-sm btn-primary" id="btn-u-to-text">Unicode ➔ 文本</button>
+      <button class="btn btn-sm btn-secondary" id="btn-uni-copy">复制结果</button>
+      <button class="btn btn-sm btn-outline" id="btn-uni-sample">示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-uni-clear">清空</button>
+      <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
+    </div>
+  </div>
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">INPUT</span>
+        <span class="col-kicker">输入文本 / 编码</span>
+        <span class="pane-stats" id="uni-input-stats"></span>
+      </div>
+      <textarea id="uni-input" class="code-area" placeholder="输入中文或 \\u4e2d\\u6587..."></textarea>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">OUTPUT</span>
+        <span class="col-kicker">转换结果</span>
+        <span class="pane-stats" id="uni-output-stats"></span>
+      </div>
+      <textarea id="uni-output" class="code-area" readonly placeholder="输出结果..."></textarea>
+    </div>
+  </div>
+  <p id="uni-status" class="status-msg"></p>
+</section>

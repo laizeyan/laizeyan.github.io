@@ -1,0 +1,50 @@
+---
+// src/components/tools/JsonTool.astro
+---
+
+<section class="tool-section" id="section-json">
+  <div class="tool-header">
+    <h2>JSON 格式化、压缩与转义</h2>
+    <div class="tool-actions">
+      <label class="action-label">
+        缩进
+        <select id="json-indent" class="select-sm">
+          <option value="2">2 空格</option>
+          <option value="4">4 空格</option>
+          <option value="tabs">Tab</option>
+        </select>
+      </label>
+      <button class="btn btn-sm btn-primary" id="btn-json-format">格式化</button>
+      <button class="btn btn-sm btn-secondary" id="btn-json-minify">压缩单行</button>
+      <button class="btn btn-sm btn-secondary" id="btn-json-escape">转义单行</button>
+      <button class="btn btn-sm btn-secondary" id="btn-json-unescape">去除转义</button>
+      <button class="btn btn-sm btn-secondary" id="btn-json-copy">复制结果</button>
+      <label class="btn btn-sm btn-outline file-btn-label">
+        导入文件
+        <input type="file" id="json-file-input" accept=".json,.txt,.log" style="display:none;" />
+      </label>
+      <button class="btn btn-sm btn-outline" id="btn-json-sample">示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-json-clear">清空</button>
+      <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
+    </div>
+  </div>
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">INPUT</span>
+        <span class="col-kicker">输入 JSON 数据</span>
+        <span class="pane-stats" id="json-input-stats"></span>
+      </div>
+      <textarea id="json-input" class="code-area" placeholder="在此粘贴或输入 JSON 数据，或拖拽文件到此处..."></textarea>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">OUTPUT</span>
+        <span class="col-kicker">处理结果</span>
+        <span class="pane-stats" id="json-output-stats"></span>
+      </div>
+      <pre id="json-output" class="code-area code-result"></pre>
+    </div>
+  </div>
+  <p id="json-status" class="status-msg"></p>
+</section>

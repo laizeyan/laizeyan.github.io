@@ -1,0 +1,55 @@
+---
+// src/components/tools/HashTool.astro
+---
+
+<section class="tool-section" id="section-hash" style="display: none;">
+  <div class="tool-header">
+    <h2>哈希散列计算 (MD5 / SHA 系列)</h2>
+    <div class="tool-actions">
+      <label class="action-label">
+        <input type="checkbox" id="hash-uppercase" /> 大写散列
+      </label>
+      <button class="btn btn-sm btn-secondary" id="btn-hash-sample">填入示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-hash-clear">清空</button>
+    </div>
+  </div>
+
+  <div class="editor-col" style="margin-bottom: 18px;">
+    <div class="pane-header">
+      <span class="pane-tag">INPUT</span>
+      <span class="col-kicker">待计算文本字符串</span>
+      <span class="pane-stats" id="hash-input-stats"></span>
+    </div>
+    <textarea id="hash-input" class="code-area hash-input-area" placeholder="在此输入需要计算哈希的明文内容..."></textarea>
+  </div>
+
+  <div class="hash-compare-bar">
+    <span class="hash-compare-label">哈希比对校验:</span>
+    <input type="text" id="hash-compare-input" class="input-text" placeholder="粘贴已知哈希值，自动校验是否匹配..." />
+    <span id="hash-compare-result" class="hash-match-pill"></span>
+  </div>
+
+  <div class="hash-results-list">
+    <div class="hash-row" id="row-md5">
+      <span class="hash-algo">MD5</span>
+      <span class="hash-value" id="val-md5">--</span>
+      <button class="btn btn-sm btn-outline btn-copy-hash" data-target="val-md5">复制</button>
+    </div>
+    <div class="hash-row" id="row-sha1">
+      <span class="hash-algo">SHA-1</span>
+      <span class="hash-value" id="val-sha1">--</span>
+      <button class="btn btn-sm btn-outline btn-copy-hash" data-target="val-sha1">复制</button>
+    </div>
+    <div class="hash-row" id="row-sha256">
+      <span class="hash-algo">SHA-256</span>
+      <span class="hash-value" id="val-sha256">--</span>
+      <button class="btn btn-sm btn-outline btn-copy-hash" data-target="val-sha256">复制</button>
+    </div>
+    <div class="hash-row" id="row-sha512">
+      <span class="hash-algo">SHA-512</span>
+      <span class="hash-value" id="val-sha512">--</span>
+      <button class="btn btn-sm btn-outline btn-copy-hash" data-target="val-sha512">复制</button>
+    </div>
+  </div>
+  <p id="hash-status" class="status-msg"></p>
+</section>

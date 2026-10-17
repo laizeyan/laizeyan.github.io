@@ -1,0 +1,51 @@
+---
+// src/components/tools/JwtTool.astro
+---
+
+<section class="tool-section" id="section-jwt" style="display: none;">
+  <div class="tool-header">
+    <h2>JWT 令牌解析与校验</h2>
+    <div class="tool-actions">
+      <button class="btn btn-sm btn-primary" id="btn-jwt-parse">解析令牌</button>
+      <button class="btn btn-sm btn-secondary" id="btn-jwt-copy-payload">复制 Payload</button>
+      <button class="btn btn-sm btn-outline" id="btn-jwt-sample">示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-jwt-clear">清空</button>
+    </div>
+  </div>
+  <div class="editor-col" style="margin-bottom: 16px;">
+    <div class="pane-header">
+      <span class="pane-tag">TOKEN</span>
+      <span class="col-kicker">粘贴 JSON Web Token (Header.Payload.Signature)</span>
+      <span class="pane-stats" id="jwt-input-stats"></span>
+    </div>
+    <textarea id="jwt-input" class="code-area jwt-input-area" placeholder="在此粘贴以 eyJ 开头的 JWT 字符串..."></textarea>
+  </div>
+  
+  <div class="jwt-token-info-card" id="jwt-info-card" style="display: none;">
+    <div class="jwt-meta-badges">
+      <span class="jwt-status-pill" id="jwt-status-pill">--</span>
+      <span class="jwt-meta-item">算法: <strong id="jwt-alg">--</strong></span>
+      <span class="jwt-meta-item">类型: <strong id="jwt-typ">--</strong></span>
+      <span class="jwt-meta-item">过期时间: <strong id="jwt-exp">--</strong></span>
+      <span class="jwt-meta-item">签发时间: <strong id="jwt-iat">--</strong></span>
+    </div>
+  </div>
+
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">HEADER</span>
+        <span class="col-kicker">标头数据 (Algorithm & Type)</span>
+      </div>
+      <pre id="jwt-header-out" class="code-area code-result"></pre>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">PAYLOAD</span>
+        <span class="col-kicker">有效载荷 (Claims & Data)</span>
+      </div>
+      <pre id="jwt-payload-out" class="code-area code-result"></pre>
+    </div>
+  </div>
+  <p id="jwt-status" class="status-msg"></p>
+</section>

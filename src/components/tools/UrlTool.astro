@@ -1,0 +1,37 @@
+---
+// src/components/tools/UrlTool.astro
+---
+
+<section class="tool-section" id="section-url" style="display: none;">
+  <div class="tool-header">
+    <h2>URL 编解码与 Query 参数解析</h2>
+    <div class="tool-actions">
+      <button class="btn btn-sm btn-primary" id="btn-url-encode">URL 编码</button>
+      <button class="btn btn-sm btn-primary" id="btn-url-decode">URL 解码</button>
+      <button class="btn btn-sm btn-secondary" id="btn-url-parse-params">解析 Query 为 JSON</button>
+      <button class="btn btn-sm btn-secondary" id="btn-url-copy">复制结果</button>
+      <button class="btn btn-sm btn-outline" id="btn-url-sample">示例</button>
+      <button class="btn btn-sm btn-outline" id="btn-url-clear">清空</button>
+      <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
+    </div>
+  </div>
+  <div class="editor-grid">
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag">INPUT</span>
+        <span class="col-kicker">待处理 URL / 参数文本</span>
+        <span class="pane-stats" id="url-input-stats"></span>
+      </div>
+      <textarea id="url-input" class="code-area" placeholder="输入 URL 或 query 字符串..."></textarea>
+    </div>
+    <div class="editor-col">
+      <div class="pane-header">
+        <span class="pane-tag pane-tag-out">OUTPUT</span>
+        <span class="col-kicker">转换结果</span>
+        <span class="pane-stats" id="url-output-stats"></span>
+      </div>
+      <textarea id="url-output" class="code-area" readonly placeholder="输出结果..."></textarea>
+    </div>
+  </div>
+  <p id="url-status" class="status-msg"></p>
+</section>

@@ -1,0 +1,65 @@
+---
+// src/components/tools/UuidTool.astro
+---
+
+<section class="tool-section" id="section-uuid" style="display: none;">
+  <div class="tool-header">
+    <h2>UUID 与安全随机密码生成器</h2>
+  </div>
+
+  <div class="gen-dual-grid">
+    <!-- 卡片 1: UUID v4 -->
+    <div class="gen-card">
+      <h3>UUID v4 批量生成</h3>
+      <div class="gen-options">
+        <label class="action-label">
+          数量
+          <select id="uuid-count" class="select-sm">
+            <option value="1">1 条</option>
+            <option value="5" selected>5 条</option>
+            <option value="10">10 条</option>
+            <option value="20">20 条</option>
+          </select>
+        </label>
+        <label class="action-label">
+          <input type="checkbox" id="uuid-upper" /> 大写
+        </label>
+        <label class="action-label">
+          <input type="checkbox" id="uuid-nohyphen" /> 无连字符
+        </label>
+      </div>
+      <div class="gen-actions-row">
+        <button class="btn btn-sm btn-primary" id="btn-gen-uuid">生成 UUID</button>
+        <button class="btn btn-sm btn-secondary" id="btn-copy-uuid">复制全部</button>
+      </div>
+      <textarea id="uuid-output" class="code-area gen-output-area" readonly placeholder="点击上方按钮生成 UUID..."></textarea>
+    </div>
+
+    <!-- 卡片 2: 安全随机密码 -->
+    <div class="gen-card">
+      <h3>安全随机密码生成</h3>
+      <div class="gen-slider-row">
+        <span class="action-label">密码长度: <strong id="pwd-len-val">16</strong> 位</span>
+        <input type="range" id="pwd-len" min="8" max="64" value="16" class="range-slider" />
+      </div>
+      <div class="gen-checkbox-group">
+        <label class="action-label"><input type="checkbox" id="pwd-upper" checked /> 大写 (A-Z)</label>
+        <label class="action-label"><input type="checkbox" id="pwd-lower" checked /> 小写 (a-z)</label>
+        <label class="action-label"><input type="checkbox" id="pwd-digits" checked /> 数字 (0-9)</label>
+        <label class="action-label"><input type="checkbox" id="pwd-symbols" checked /> 符号 (!@#$)</label>
+        <label class="action-label"><input type="checkbox" id="pwd-no-ambig" /> 排除易混淆</label>
+      </div>
+      <div class="gen-actions-row">
+        <button class="btn btn-sm btn-primary" id="btn-gen-pwd">生成密码</button>
+        <button class="btn btn-sm btn-secondary" id="btn-copy-pwd">复制密码</button>
+      </div>
+      <input type="text" id="pwd-single-output" class="input-text pwd-result-input" readonly placeholder="点击生成随机安全密码..." />
+      <div class="pwd-strength-bar-wrap">
+        <span class="strength-label">密码强度:</span>
+        <div class="strength-meter"><div id="strength-fill" class="strength-fill"></div></div>
+        <span id="strength-text" class="strength-text">--</span>
+      </div>
+    </div>
+  </div>
+  <p id="uuid-status" class="status-msg"></p>
+</section>

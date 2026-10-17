@@ -1,0 +1,105 @@
+---
+// src/components/tools/TimestampTool.astro
+---
+
+<section class="tool-section" id="section-timestamp" style="display: none;">
+  <div class="tool-header">
+    <h2>时间戳转换与世界时钟</h2>
+  </div>
+
+  <!-- 当前时间戳看板 -->
+  <div class="timestamp-live-box">
+    <div class="live-clock-section">
+      <div class="clock-display">
+        <span class="clock-label">当前 Unix 时间戳 (秒)</span>
+        <div class="clock-val-row">
+          <span class="clock-val" id="live-ts-sec">--</span>
+          <button type="button" class="btn-copy-chip" data-copy="live-ts-sec" title="复制秒级时间戳">复制</button>
+        </div>
+      </div>
+      <div class="clock-display">
+        <span class="clock-label">毫秒时间戳 (ms)</span>
+        <div class="clock-val-row">
+          <span class="clock-val" id="live-ts-ms">--</span>
+          <button type="button" class="btn-copy-chip" data-copy="live-ts-ms" title="复制毫秒时间戳">复制</button>
+        </div>
+      </div>
+    </div>
+    <div class="clock-actions">
+      <button class="btn btn-sm btn-outline" id="btn-toggle-clock">暂停时钟</button>
+    </div>
+  </div>
+
+  <div class="time-convert-grid">
+    <div class="time-card">
+      <h3>时间戳 ➔ 北京时间 / ISO</h3>
+      <div class="time-input-group">
+        <input type="text" id="ts-to-date-input" class="input-text time-input-field" placeholder="输入时间戳 (秒或毫秒)" />
+        <div class="time-btn-row">
+          <button class="btn btn-sm btn-primary" id="btn-ts-to-date">转换为日期</button>
+          <button class="btn btn-sm btn-secondary" id="btn-ts-fill-now">填入当前时间戳</button>
+        </div>
+      </div>
+      <div class="time-quick-wrap">
+        <span class="time-quick-label">快速偏移:</span>
+        <div class="time-quick-btns">
+          <button class="btn-time-quick" data-offset="midnight">今日零点</button>
+          <button class="btn-time-quick" data-offset="+1h">+1小时</button>
+          <button class="btn-time-quick" data-offset="+1d">+1天</button>
+          <button class="btn-time-quick" data-offset="+7d">+7天</button>
+          <button class="btn-time-quick" data-offset="-1d">-1天</button>
+        </div>
+      </div>
+      <div class="time-res-list" id="ts-to-date-res">
+        <div class="res-item">
+          <span class="res-lbl">北京时间 (CST):</span>
+          <div class="res-val-box">
+            <strong id="res-bj">--</strong>
+            <button type="button" class="btn-copy-chip" data-copy="res-bj" title="复制北京时间">复制</button>
+          </div>
+        </div>
+        <div class="res-item">
+          <span class="res-lbl">UTC 时间 (GMT):</span>
+          <div class="res-val-box">
+            <strong id="res-utc">--</strong>
+            <button type="button" class="btn-copy-chip" data-copy="res-utc" title="复制UTC时间">复制</button>
+          </div>
+        </div>
+        <div class="res-item">
+          <span class="res-lbl">ISO 8601:</span>
+          <div class="res-val-box">
+            <strong id="res-iso">--</strong>
+            <button type="button" class="btn-copy-chip" data-copy="res-iso" title="复制ISO 8601">复制</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="time-card">
+      <h3>日期时间 ➔ 时间戳</h3>
+      <div class="time-input-group">
+        <input type="datetime-local" id="date-to-ts-input" class="input-text time-input-field" step="1" />
+        <div class="time-btn-row">
+          <button class="btn btn-sm btn-primary" id="btn-date-to-ts">转换为时间戳</button>
+          <button class="btn btn-sm btn-secondary" id="btn-date-fill-now">填入当前时间</button>
+        </div>
+      </div>
+      <div class="time-res-list time-res-list-down">
+        <div class="res-item">
+          <span class="res-lbl">时间戳 (秒):</span>
+          <div class="res-val-box">
+            <strong id="res-sec">--</strong>
+            <button type="button" class="btn-copy-chip" data-copy="res-sec" title="复制秒级时间戳">复制</button>
+          </div>
+        </div>
+        <div class="res-item">
+          <span class="res-lbl">时间戳 (毫秒):</span>
+          <div class="res-val-box">
+            <strong id="res-ms">--</strong>
+            <button type="button" class="btn-copy-chip" data-copy="res-ms" title="复制毫秒时间戳">复制</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

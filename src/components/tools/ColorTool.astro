@@ -1,0 +1,46 @@
+---
+// src/components/tools/ColorTool.astro
+---
+
+<section class="tool-section" id="section-color" style="display: none;">
+  <div class="tool-header">
+    <h2>颜色转换、取色器与调色板</h2>
+  </div>
+
+  <div class="color-workbench-grid">
+    <div class="color-preview-card">
+      <div class="color-swatch-box" id="color-swatch">
+        <span class="swatch-contrast-w">白色对比测试</span>
+        <span class="swatch-contrast-b">黑色对比测试</span>
+      </div>
+      <div class="color-picker-row">
+        <input type="color" id="native-color-picker" value="#b4452e" class="color-picker-input" />
+        <span class="color-picker-hint">点击色盘快速取色</span>
+      </div>
+    </div>
+
+    <div class="color-inputs-card">
+      <div class="color-input-row">
+        <span class="color-lbl">HEX:</span>
+        <input type="text" id="color-hex" class="input-text" value="#b4452e" placeholder="#ffffff" />
+        <button class="btn btn-sm btn-outline btn-copy-color" data-source="color-hex">复制</button>
+      </div>
+      <div class="color-input-row">
+        <span class="color-lbl">RGB:</span>
+        <input type="text" id="color-rgb" class="input-text" value="rgb(180, 69, 46)" placeholder="rgb(255, 255, 255)" />
+        <button class="btn btn-sm btn-outline btn-copy-color" data-source="color-rgb">复制</button>
+      </div>
+      <div class="color-input-row">
+        <span class="color-lbl">HSL:</span>
+        <input type="text" id="color-hsl" class="input-text" value="hsl(10, 59%, 44%)" placeholder="hsl(0, 0%, 100%)" />
+        <button class="btn btn-sm btn-outline btn-copy-color" data-source="color-hsl">复制</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="palette-box">
+    <span class="palette-title">杂志与工程预设色板 (点击载入):</span>
+    <div class="palette-chips" id="palette-chips-container"></div>
+  </div>
+  <p id="color-status" class="status-msg"></p>
+</section>
