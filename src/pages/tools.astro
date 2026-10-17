@@ -48,7 +48,7 @@ const toolCategories = [
   title="实用工具箱 · Ze'Yan"
   description="开箱即用的前端开发工具箱：JSON格式化、Base64/URL转换、JWT解析、哈希计算、UUID生成、时间戳、正则测试等"
 >
-  <article class="prose tools-page reveal">
+  <article class="tools-page reveal">
     <header class="tools-head">
       <div class="tools-head-accent" aria-hidden="true"></div>
       <p class="section-kicker">开发者利器</p>
@@ -101,7 +101,7 @@ const toolCategories = [
       </aside>
 
       <!-- 工具主操作区 -->
-      <main class="toolbox-panel" id="toolbox-active-panel">
+      <div class="toolbox-panel" id="toolbox-active-panel" role="region" aria-label="工具操作区">
         <!-- 1. JSON 格式化工具 -->
         <section class="tool-section" id="section-json">
           <div class="tool-header">
@@ -126,6 +126,7 @@ const toolCategories = [
               </label>
               <button class="btn btn-sm btn-outline" id="btn-json-sample">示例</button>
               <button class="btn btn-sm btn-outline" id="btn-json-clear">清空</button>
+              <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
             </div>
           </div>
           <div class="editor-grid">
@@ -163,6 +164,7 @@ const toolCategories = [
               </label>
               <button class="btn btn-sm btn-outline" id="btn-b64-sample">示例</button>
               <button class="btn btn-sm btn-outline" id="btn-b64-clear">清空</button>
+              <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
             </div>
           </div>
           <div class="editor-grid">
@@ -197,6 +199,7 @@ const toolCategories = [
               <button class="btn btn-sm btn-secondary" id="btn-url-copy">复制结果</button>
               <button class="btn btn-sm btn-outline" id="btn-url-sample">示例</button>
               <button class="btn btn-sm btn-outline" id="btn-url-clear">清空</button>
+              <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
             </div>
           </div>
           <div class="editor-grid">
@@ -230,6 +233,7 @@ const toolCategories = [
               <button class="btn btn-sm btn-secondary" id="btn-uni-copy">复制结果</button>
               <button class="btn btn-sm btn-outline" id="btn-uni-sample">示例</button>
               <button class="btn btn-sm btn-outline" id="btn-uni-clear">清空</button>
+              <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
             </div>
           </div>
           <div class="editor-grid">
@@ -512,6 +516,7 @@ const toolCategories = [
               <button class="btn btn-sm btn-primary" id="btn-run-diff">比较差异</button>
               <button class="btn btn-sm btn-secondary" id="btn-diff-sample">填入对比示例</button>
               <button class="btn btn-sm btn-outline" id="btn-diff-clear">清空</button>
+              <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
             </div>
           </div>
           <div class="editor-grid">
@@ -554,6 +559,7 @@ const toolCategories = [
             <span class="regex-slash">➔</span>
             <input type="text" id="regex-replace-input" class="regex-pattern-input" placeholder="输入替换文本，支持 $1, $2 等捕获组..." />
             <button class="btn btn-sm btn-secondary" id="btn-regex-replace">执行替换</button>
+            <button type="button" class="btn btn-sm btn-outline btn-layout-toggle" title="切换左右并排或上下堆叠">并排 ⇄ 堆叠</button>
           </div>
 
           <div class="regex-presets">
@@ -646,11 +652,9 @@ const toolCategories = [
             <p class="avatar-hint">基于 5×5 轴对称哈希算法实时渲染，支持导出高清透明 PNG。</p>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   </article>
-
-<!-- 工具箱前端交互核心逻辑脚本 (标准 Astro 客户端脚本，完美支持 ClientRouter / SPA 路由) -->
 
 <!-- 工具箱前端交互核心逻辑脚本 (标准 Astro 客户端脚本，完美支持 ClientRouter / SPA 路由) -->
   <script>
@@ -992,6 +996,19 @@ const toolCategories = [
         }
       };
       document.addEventListener("keydown", globalKeydownListener);
+
+            // 布局切换 (左右并排 / 上下堆叠)
+      document.querySelectorAll(".btn-layout-toggle").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const sec = btn.closest(".tool-section");
+          const grid = sec?.querySelector(".editor-grid");
+          if (grid) {
+            grid.classList.toggle("is-stacked");
+            const isStacked = grid.classList.contains("is-stacked");
+            btn.textContent = isStacked ? "堆叠 ➔ 并排" : "并排 ⇄ 堆叠";
+          }
+        });
+      });
 
       // 默认激活路由对应工具或 JSON
       const hash = window.location.hash.replace("#", "");
@@ -2362,7 +2379,10 @@ const toolCategories = [
 
 <style>
   .tools-page {
-    padding: 40px 0;
+    padding: 24px 0 48px;
+    max-width: 100%;
+    width: 100%;
+    color: var(--text);
   }
 
   .tools-head {
@@ -2389,9 +2409,9 @@ const toolCategories = [
 
   .toolbox-layout {
     display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 24px;
-    margin-top: 28px;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 28px;
+    margin-top: 24px;
     align-items: start;
   }
 
@@ -2403,6 +2423,9 @@ const toolCategories = [
     box-shadow: var(--shadow-sm);
     position: sticky;
     top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    scrollbar-width: thin;
   }
 
   .sidebar-search-box {
@@ -2515,9 +2538,9 @@ const toolCategories = [
     background-color: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 24px 28px;
+    padding: 28px 32px;
     box-shadow: var(--shadow-sm);
-    min-height: 540px;
+    min-height: 560px;
   }
 
   .tool-section h2 {
@@ -2679,7 +2702,17 @@ const toolCategories = [
   .editor-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 18px;
+    transition: all 0.2s ease;
+  }
+
+  .editor-grid.is-stacked {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .editor-grid.is-stacked .code-area {
+    height: 260px;
   }
 
   .editor-col {
@@ -3498,29 +3531,37 @@ const toolCategories = [
   @media (max-width: 960px) {
     .toolbox-layout {
       grid-template-columns: 1fr;
-      gap: 18px;
+      gap: 20px;
     }
 
     .toolbox-sidebar {
-      position: static;
+      position: sticky;
+      top: 60px;
+      z-index: 10;
+      max-height: none;
       display: flex;
-      align-items: center;
-      gap: 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding: 10px 14px;
-      mask-image: linear-gradient(90deg, black 0%, black calc(100% - 24px), transparent 100%);
-      -webkit-mask-image: linear-gradient(90deg, black 0%, black calc(100% - 24px), transparent 100%);
-    }
-
-    .toolbox-sidebar::-webkit-scrollbar {
-      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 14px;
     }
 
     .sidebar-search-box {
       margin-bottom: 0;
-      min-width: 160px;
+      width: 100%;
+    }
+
+    .sidebar-cats-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+    }
+
+    .sidebar-cats-wrapper::-webkit-scrollbar {
+      display: none;
     }
 
     .tool-cat-group {
@@ -3549,10 +3590,11 @@ const toolCategories = [
       width: auto;
       white-space: nowrap;
       padding: 6px 12px;
+      font-size: 0.84rem;
     }
 
     .toolbox-panel {
-      padding: 20px;
+      padding: 22px 20px;
     }
   }
 
@@ -3572,11 +3614,12 @@ const toolCategories = [
     .tool-header {
       flex-direction: column;
       align-items: flex-start;
-      gap: 12px;
+      gap: 14px;
     }
 
     .tool-actions {
       width: 100%;
+      justify-content: flex-start;
     }
 
     .input-row {
