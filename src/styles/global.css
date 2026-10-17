@@ -24,7 +24,7 @@
   /* 纸张纹理渐变（微弱，给卡片/区块用） */
   --paper-gradient: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
 
-  --serif: "Playfair Display", "Noto Serif SC", Georgia, "Songti SC", serif;
+  --serif: "Playfair Display", "Noto Serif SC", -apple-system-ui-serif, "Songti SC", "Source Han Serif SC", "SimSun", Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
     "Noto Sans CJK SC", "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
