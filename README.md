@@ -54,15 +54,33 @@ pnpm build
 | 工作流 | 触发 | 作用 |
 | :--- | :--- | :--- |
 | `deploy.yml` | push `main` / 手动 / trending 更新完成后 | `pnpm build` + 部署 Pages |
-| `update-trending.yml` | 每周五 UTC 00:00（北京 08:00）/ 手动 | 抓取 GitHub Trending 写入 `src/data/trending-data.json` 并提交 |
+| `update-trending.yml` | 每周五 UTC 00:00（北京 08:00）/ 手动 | 抓取 Trending、校正历史周次、自动补写周报，然后提交 |
 
-`scripts/fetch-trending.js` 的周编号按 **ISO 8601**（周一为一周起点）计算，
-日期区间用 UTC 生成，避免 UTC+8 下整体偏移一天。
+### Trending 数据与周报
+
+两个脚本分工明确，可单独运行：
+
+```bash
+node scripts/fetch-trending.js        # 抓取并写入 src/data/trending-data.json
+node scripts/generate-weekly-post.js  # 依据数据补写当周周报
+```
+
+**周次口径**：全部按 **ISO 8601**（周一为一周起点，周四决定归属年份），
+时间统一用 UTC 计算（`scripts/lib/week.js`）。这是刻意的选择——Actions 跑在 UTC、
+本地开发在 UTC+8，混用本地时区会让日期区间整体提前一天（W42 曾被记成 `10-11~10-17`）。
+
+`fetch-trending.js` 每次运行都会顺带**校正历史周次**：以 `fetchedAt` 为唯一事实来源
+重算 `weekId` / `startDate` / `endDate`，因此历史脏数据会在下一次运行时自愈，
+抓取失败也会把已完成的校正写回。
+
+**周报生成策略**：`generate-weekly-post.js` 只写数据能证明的事实（排名变化、
+Star 增量、语言分布、连续在榜周数），不臆测项目价值。**已存在的周报一律跳过**，
+所以手写稿永远优先于自动生成——想人工接管某一期，只需手动创建同名文件。
 
 ## 维护检查清单
 
 ```bash
-npx astro check      # 须 0 errors / 0 warnings
+npx astro check      # 须 0 errors / 0 warnings / 0 hints
 pnpm build           # 含 pagefind 索引
 pnpm audit           # 无 high 及以上漏洞
 ```
@@ -70,4 +88,8 @@ pnpm audit           # 无 high 及以上漏洞
 标签索引由 `src/utils/tags.ts` 统一汇总 **博客 + 项目** 的标签，
 新增标签无需改动页面；不要在页面里另建一份标签来源，否则会出现
 `/tags/xxx` 死链。
+
+> 长文章（> 约 7000px）请务必实测首屏：`.reveal` 动画的 IntersectionObserver
+> 若把 threshold 调高，超长文章的可视比例永远达不到阈值，会整页停在 `opacity:0`。
+
 

@@ -4,42 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as cheerio from "cheerio";
+import { getWeekId, getWeekDateRange, normalizeWeek } from "./lib/week.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TRENDING_URL = "https://github.com/trending";
 const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "trending-data.json");
-
-// 统一用 UTC 计算周一零点：日期区间是「纯日期」，若混用本地零点再 toISOString()
-// 会在 UTC+8 等时区整体提前一天（曾导致 W42 被记成 10-11 ~ 10-17）。
-function getWeekStart(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const dayOfWeek = d.getUTCDay(); // 0 = 周日
-  d.setUTCDate(d.getUTCDate() - ((dayOfWeek + 6) % 7));
-  return d;
-}
-
-// ISO 8601 周编号：包含周四的那一周属于该周所在的年份，
-// 因此跨年周（如 2026-01-01）不会被算成上一年的 W53。
-function getWeekId(date) {
-  const monday = getWeekStart(date);
-  const thursday = new Date(monday);
-  thursday.setUTCDate(monday.getUTCDate() + 3);
-  const year = thursday.getUTCFullYear();
-  const yearStart = new Date(Date.UTC(year, 0, 1));
-  const weekNumber = Math.floor((thursday - yearStart) / 86400000 / 7) + 1;
-  return `${year}-W${String(weekNumber).padStart(2, "0")}`;
-}
-
-function getWeekDateRange(date) {
-  const monday = getWeekStart(date);
-  const sunday = new Date(monday);
-  sunday.setUTCDate(monday.getUTCDate() + 6);
-
-  return {
-    startDate: monday.toISOString().split("T")[0],
-    endDate: sunday.toISOString().split("T")[0],
-  };
-}
 
 async function fetchTrending() {
   const url = `${TRENDING_URL}?since=weekly`;
@@ -108,29 +77,57 @@ function parseTrending(html) {
   return repos;
 }
 
-async function main() {
-  const html = await fetchTrending();
-  const repos = parseTrending(html);
-
-  if (repos.length === 0) {
-    console.warn("[Trending] 警告: 未解析到任何仓库，保持现有数据不变。");
-    return;
+function loadExisting() {
+  if (!fs.existsSync(OUTPUT_FILE)) return { weeks: [] };
+  try {
+    const data = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
+    if (!Array.isArray(data.weeks)) return { weeks: [] };
+    return data;
+  } catch {
+    console.log("[Trending] 现有数据文件无效，重新初始化。");
+    return { weeks: [] };
   }
+}
 
+async function main() {
   const now = new Date();
   const weekId = getWeekId(now);
   const { startDate, endDate } = getWeekDateRange(now);
 
-  let existingData = { weeks: [] };
-  if (fs.existsSync(OUTPUT_FILE)) {
-    try {
-      existingData = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
-    } catch {
-      console.log("[Trending] 现有数据文件无效，重新初始化。");
+  const existingData = loadExisting();
+
+  // 顺带校正历史周次的 ISO 对齐：早期版本用本地时区计算，
+  // 在 UTC+8 下会把区间整体提前一天（W42 曾是 10-11~10-17）。
+  let repaired = 0;
+  for (const week of existingData.weeks) {
+    if (normalizeWeek(week)) {
+      repaired += 1;
+      console.log(`[Trending] 已校正历史周次: ${week.weekId} (${week.startDate} ~ ${week.endDate})`);
     }
   }
 
-  const existingWeekIndex = existingData.weeks.findIndex((w) => w.weekId === weekId);
+  let html;
+  try {
+    html = await fetchTrending();
+  } catch (err) {
+    // 抓取失败也要把历史校正写回去，否则修复永远落不了盘
+    if (repaired > 0) {
+      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
+      console.log(`[Trending] 抓取失败，但已写回 ${repaired} 条历史校正。`);
+    }
+    throw err;
+  }
+
+  const repos = parseTrending(html);
+
+  if (repos.length === 0) {
+    console.warn("[Trending] 警告: 未解析到任何仓库，保持现有数据不变。");
+    if (repaired > 0) {
+      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
+    }
+    return { weekId, updated: false, repaired, total: existingData.weeks.length };
+  }
+
   const weekData = {
     weekId,
     startDate,
@@ -139,6 +136,7 @@ async function main() {
     repos,
   };
 
+  const existingWeekIndex = existingData.weeks.findIndex((w) => w.weekId === weekId);
   if (existingWeekIndex >= 0) {
     existingData.weeks[existingWeekIndex] = weekData;
     console.log(`[Trending] 已成功更新第 ${weekId} 周数据 (${repos.length} 个项目)`);
@@ -153,9 +151,21 @@ async function main() {
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
   console.log(`[Trending] 保存完毕，历史总周数: ${existingData.weeks.length}`);
+
+  return { weekId, updated: true, repaired, total: existingData.weeks.length };
 }
 
-main().catch((err) => {
-  console.error("[Trending] 运行出错:", err.message);
-  process.exit(1);
-});
+main()
+  .then((result) => {
+    // 供工作流读取（GitHub Actions 会解析 $GITHUB_OUTPUT）
+    if (process.env.GITHUB_OUTPUT) {
+      fs.appendFileSync(
+        process.env.GITHUB_OUTPUT,
+        `week_id=${result.weekId}\nupdated=${result.updated}\nrepaired=${result.repaired}\n`
+      );
+    }
+  })
+  .catch((err) => {
+    console.error("[Trending] 运行出错:", err.message);
+    process.exit(1);
+  });

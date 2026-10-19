@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: trending-update
+  cancel-in-progress: false
+
 jobs:
   update-trending:
     runs-on: ubuntu-latest
@@ -31,12 +35,22 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Fetch Trending data
+        id: fetch
         run: node scripts/fetch-trending.js
+
+      # 自动补写本周周报。已存在同名周报（含手写稿）时脚本会跳过，
+      # 因此手写内容始终优先，不会被覆盖。
+      - name: Generate weekly post
+        id: post
+        run: node scripts/generate-weekly-post.js
+
+      - name: Verify content
+        run: npx astro check
 
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet src/data/trending-data.json; then
+          if git diff --quiet src/data/trending-data.json src/content/blog; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -47,6 +61,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/trending-data.json
-          git commit -m "chore(trending): update weekly github trending data"
+          git add src/data/trending-data.json src/content/blog
+          if git diff --cached --quiet; then
+            echo "nothing staged, skipping"
+            exit 0
+          fi
+          if git diff --cached --name-only | grep -q 'src/content/blog/'; then
+            git commit -m "chore(trending): update weekly github trending data and auto-generate post"
+          else
+            git commit -m "chore(trending): update weekly github trending data"
+          fi
           git push

@@ -27,10 +27,25 @@ const weeks: WeekData[] = (trendingRaw as { weeks: WeekData[] }).weeks || [];
 const latestWeek = weeks[0] || { repos: [] };
 const initialRepos = latestWeek.repos || [];
 
+// 周区间是「纯日期」语义，必须直接解析 YYYY-MM-DD 的字面量。
+// 用 new Date("2026-10-19") 会得到 UTC 零点，再取本地 getDate()
+// 在 UTC 负时区会整体退一天，与 ISO 周定义不一致。
 function formatDate(dateStr: string) {
   if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return `${d.getMonth() + 1}月${d.getDate()}日`;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateStr);
+  if (!match) return "";
+  return `${Number(match[2])}月${Number(match[3])}日`;
+}
+
+// 抓取时刻按 UTC 展示，避免构建机时区影响快照时间的读法
+function formatFetchedAt(iso: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())} ${pad(
+    d.getUTCHours()
+  )}:${pad(d.getUTCMinutes())} UTC`;
 }
 
 function formatNum(num: number) {
@@ -67,6 +82,25 @@ const initialLangs = Object.keys(initialLangCounts).sort();
       <p class="lead">
         每周精选 GitHub 增长最快的前沿开源项目，追踪全球技术浪潮与工程范式。
       </p>
+      {
+        latestWeek.weekId && (
+          <p class="trending-snapshot-meta">
+            <span class="snapshot-item">
+              当前快照 <strong>{latestWeek.weekId}</strong>
+            </span>
+            <span class="snapshot-sep" aria-hidden="true">·</span>
+            <span class="snapshot-item">
+              ISO 周区间 {latestWeek.startDate} ~ {latestWeek.endDate}
+            </span>
+            {latestWeek.fetchedAt && (
+              <>
+                <span class="snapshot-sep" aria-hidden="true">·</span>
+                <span class="snapshot-item">抓取于 {formatFetchedAt(latestWeek.fetchedAt)}</span>
+              </>
+            )}
+          </p>
+        )
+      }
     </header>
 
     <hr class="rule" />
@@ -81,6 +115,7 @@ const initialLangs = Object.keys(initialLangCounts).sort();
               weeks.map((w, idx) => (
                 <option value={idx}>
                   {w.weekId} ({formatDate(w.startDate)} - {formatDate(w.endDate)})
+                  {w.fetchedAt ? ` · 抓取 ${formatFetchedAt(w.fetchedAt).slice(0, 10)}` : ""}
                 </option>
               ))
             }
@@ -528,6 +563,28 @@ const initialLangs = Object.keys(initialLangCounts).sort();
     margin: 8px 0 16px;
     letter-spacing: -0.03em;
     line-height: 1.05;
+  }
+
+  /* 快照元信息：周编号 / ISO 区间 / 抓取时刻，三者口径必须一致 */
+  .trending-snapshot-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin: 12px 0 0;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .trending-snapshot-meta strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .snapshot-sep {
+    color: var(--border);
   }
 
   .trending-controls {

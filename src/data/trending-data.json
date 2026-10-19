@@ -4,7 +4,7 @@
       "weekId": "2026-W43",
       "startDate": "2026-10-19",
       "endDate": "2026-10-25",
-      "fetchedAt": "2026-10-19T08:05:48.530Z",
+      "fetchedAt": "2026-10-19T09:15:51.839Z",
       "repos": [
         {
           "owner": "morluto",
@@ -13,8 +13,8 @@
           "description": "Reverse engineer anything with agents, from app behavior down to native binaries.",
           "language": "TypeScript",
           "langColor": "#3178c6",
-          "stars": 327706,
-          "forks": 82939,
+          "stars": 328612,
+          "forks": 83186,
           "todayStars": 229268
         },
         {
@@ -24,8 +24,8 @@
           "description": "ArtCraft is an intentional crafting engine for artists, designers, and filmmakers",
           "language": "Rust",
           "langColor": "#dea584",
-          "stars": 33094,
-          "forks": 5233,
+          "stars": 33150,
+          "forks": 5245,
           "todayStars": 16379
         },
         {
@@ -35,8 +35,8 @@
           "description": "Tool for automatic PS5 executables porting to Linux and Windows",
           "language": "C++",
           "langColor": "#f34b7d",
-          "stars": 43566,
-          "forks": 3960,
+          "stars": 43644,
+          "forks": 3967,
           "todayStars": 14224
         },
         {
@@ -46,8 +46,8 @@
           "description": "Official, Anthropic-managed directory of high quality Claude Code Plugins.",
           "language": "Python",
           "langColor": "#3572A5",
-          "stars": 42939,
-          "forks": 4548,
+          "stars": 42980,
+          "forks": 4550,
           "todayStars": 4774
         },
         {
@@ -57,8 +57,8 @@
           "description": "Context window optimization for AI coding agents. Sandboxes tool output (98% reduction), persists session memory, and enforces routing across 17 platforms via MCP + hooks.",
           "language": "TypeScript",
           "langColor": "#3178c6",
-          "stars": 30868,
-          "forks": 2297,
+          "stars": 30886,
+          "forks": 2298,
           "todayStars": 4138
         },
         {
@@ -68,8 +68,8 @@
           "description": "Editorial diagram design for Claude Code, Codex, GitHub Copilot, Cursor, Factory Droid, and Pi. 44 diagram types. Self-contained HTML + SVG. No shadows. No Mermaid slop.",
           "language": "HTML",
           "langColor": "#e34c26",
-          "stars": 57976,
-          "forks": 3719,
+          "stars": 58026,
+          "forks": 3721,
           "todayStars": 7901
         },
         {
@@ -79,8 +79,8 @@
           "description": "Ghidra is a software reverse engineering (SRE) framework",
           "language": "Java",
           "langColor": "#b07219",
-          "stars": 91138,
-          "forks": 10202,
+          "stars": 91175,
+          "forks": 10206,
           "todayStars": 7602
         },
         {
@@ -90,8 +90,8 @@
           "description": "Write HTML. Render video. Built for agents.",
           "language": "TypeScript",
           "langColor": "#3178c6",
-          "stars": 67050,
-          "forks": 6076,
+          "stars": 67103,
+          "forks": 6078,
           "todayStars": 5883
         },
         {
@@ -101,8 +101,8 @@
           "description": "Cursor plugin specification and official plugins",
           "language": "TypeScript",
           "langColor": "#3178c6",
-          "stars": 12887,
-          "forks": 1266,
+          "stars": 12905,
+          "forks": 1267,
           "todayStars": 1717
         },
         {
@@ -112,8 +112,8 @@
           "description": "The job search that runs on your machine. AI job application framework built on Claude Code: evaluate postings, tailor CVs, write cover letters, prep interviews. Fork it and own it.",
           "language": "Python",
           "langColor": "#3572A5",
-          "stars": 54542,
-          "forks": 17622,
+          "stars": 54767,
+          "forks": 17668,
           "todayStars": 5742
         }
       ]
