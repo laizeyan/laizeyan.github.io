@@ -1,26 +1,31 @@
 ---
 import { getCollection } from "astro:content";
 import Base from "../../layouts/Base.astro";
+import { getTagSummaries } from "../../utils/tags";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
-  const tags = Array.from(
-    new Set(posts.flatMap((post) => post.data.tags))
-  ).sort();
-  return tags.map((tag) => ({
+  const summaries = await getTagSummaries();
+  const [posts, projects] = await Promise.all([
+    getCollection("blog", ({ data }) => !data.draft),
+    getCollection("projects"),
+  ]);
+
+  return summaries.map(({ tag }) => ({
     params: { tag },
-    props: { tag, posts },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+      projects: projects
+        .filter((project) => project.data.tags.includes(tag))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+      allTags: summaries.map((s) => s.tag),
+    },
   }));
 }
 
-const { tag, posts } = Astro.props;
-const tagged = posts
-  .filter((post) => post.data.tags.includes(tag))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const allTags = Array.from(
-  new Set(posts.flatMap((post) => post.data.tags))
-).sort();
+const { tag, posts, projects, allTags } = Astro.props;
 
 const formatDate = (d: Date) =>
   d.toLocaleDateString("zh-CN", {
@@ -28,17 +33,19 @@ const formatDate = (d: Date) =>
     month: "2-digit",
     day: "2-digit",
   });
+
+const total = posts.length + projects.length;
 ---
 
 <Base
   title={`标签：${tag} · Ze'Yan`}
-  description={`标签「${tag}」下的所有文章`}
+  description={`标签「${tag}」下的所有文章与项目`}
 >
   <header class="page-head reveal">
     <p class="section-kicker">标签</p>
     <h1>#{tag}</h1>
     <p class="lead page-lead">
-      共 {tagged.length} 篇与「{tag}」相关的文章，按时间倒序排印。
+      共 {total} 条与「{tag}」相关的内容，按时间倒序排印。
     </p>
   </header>
 
@@ -59,31 +66,84 @@ const formatDate = (d: Date) =>
     }
   </div>
 
-  <ol class="toc reveal">
-    {
-      tagged.map((post, i) => (
-        <li class="toc-item" data-tags={post.data.tags.join(",")}>
-          <span class="toc-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-          <time class="toc-date">{formatDate(post.data.pubDate)}</time>
-          <div class="toc-main">
-            <a class="toc-title" href={`/blog/${post.id}`}>
-              {post.data.title}
-            </a>
-            <p class="toc-desc">{post.data.description}</p>
+  {
+    projects.length > 0 && (
+      <section class="tag-section reveal">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">项目</p>
+            <h2>相关项目</h2>
           </div>
-          <div class="toc-tags">
-            {post.data.tags.map((t) => (
-              <a class="tag" href={`/tags/${t}`}>
-                {t}
-              </a>
-            ))}
+          <a href="/projects" class="more">查看全部 →</a>
+        </div>
+        <ol class="toc">
+          {projects.map((project, i) => (
+            <li class="toc-item">
+              <span class="toc-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <time class="toc-date">{formatDate(project.data.date)}</time>
+              <div class="toc-main">
+                <a class="toc-title" href={`/projects/${project.data.slug ?? project.id}`}>
+                  {project.data.title}
+                </a>
+                <p class="toc-desc">{project.data.description}</p>
+              </div>
+              <div class="toc-tags">
+                {project.data.tags.map((t) => (
+                  <a class="tag" href={`/tags/${t}`}>
+                    {t}
+                  </a>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section class="tag-section reveal">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">文章</p>
+            <h2>相关文章</h2>
           </div>
-        </li>
-      ))
-    }
-  </ol>
+          <a href="/blog" class="more">查看全部 →</a>
+        </div>
+        <ol class="toc">
+          {posts.map((post, i) => (
+            <li class="toc-item" data-tags={post.data.tags.join(",")}>
+              <span class="toc-idx" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <time class="toc-date">{formatDate(post.data.pubDate)}</time>
+              <div class="toc-main">
+                <a class="toc-title" href={`/blog/${post.id}`}>
+                  {post.data.title}
+                </a>
+                <p class="toc-desc">{post.data.description}</p>
+              </div>
+              <div class="toc-tags">
+                {post.data.tags.map((t) => (
+                  <a class="tag" href={`/tags/${t}`}>
+                    {t}
+                  </a>
+                ))}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )
+  }
 </Base>
 
 <style>
-  /* 所有共享样式已移至 global.css */
+  /* 所有共享样式已移至 global.css；此处仅补标签页的分节间距 */
+  .tag-section {
+    margin-top: 44px;
+  }
+
+  .tag-section:first-of-type {
+    margin-top: 36px;
+  }
 </style>

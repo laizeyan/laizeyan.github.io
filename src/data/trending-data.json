@@ -1,9 +1,127 @@
 {
   "weeks": [
     {
+      "weekId": "2026-W43",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-25",
+      "fetchedAt": "2026-10-19T08:05:48.530Z",
+      "repos": [
+        {
+          "owner": "morluto",
+          "repo": "rea",
+          "url": "https://github.com/morluto/rea",
+          "description": "Reverse engineer anything with agents, from app behavior down to native binaries.",
+          "language": "TypeScript",
+          "langColor": "#3178c6",
+          "stars": 327706,
+          "forks": 82939,
+          "todayStars": 229268
+        },
+        {
+          "owner": "storytold",
+          "repo": "artcraft",
+          "url": "https://github.com/storytold/artcraft",
+          "description": "ArtCraft is an intentional crafting engine for artists, designers, and filmmakers",
+          "language": "Rust",
+          "langColor": "#dea584",
+          "stars": 33094,
+          "forks": 5233,
+          "todayStars": 16379
+        },
+        {
+          "owner": "boykopovar",
+          "repo": "AnyPS5",
+          "url": "https://github.com/boykopovar/AnyPS5",
+          "description": "Tool for automatic PS5 executables porting to Linux and Windows",
+          "language": "C++",
+          "langColor": "#f34b7d",
+          "stars": 43566,
+          "forks": 3960,
+          "todayStars": 14224
+        },
+        {
+          "owner": "anthropics",
+          "repo": "claude-plugins-official",
+          "url": "https://github.com/anthropics/claude-plugins-official",
+          "description": "Official, Anthropic-managed directory of high quality Claude Code Plugins.",
+          "language": "Python",
+          "langColor": "#3572A5",
+          "stars": 42939,
+          "forks": 4548,
+          "todayStars": 4774
+        },
+        {
+          "owner": "mksglu",
+          "repo": "context-mode",
+          "url": "https://github.com/mksglu/context-mode",
+          "description": "Context window optimization for AI coding agents. Sandboxes tool output (98% reduction), persists session memory, and enforces routing across 17 platforms via MCP + hooks.",
+          "language": "TypeScript",
+          "langColor": "#3178c6",
+          "stars": 30868,
+          "forks": 2297,
+          "todayStars": 4138
+        },
+        {
+          "owner": "cathrynlavery",
+          "repo": "diagram-design",
+          "url": "https://github.com/cathrynlavery/diagram-design",
+          "description": "Editorial diagram design for Claude Code, Codex, GitHub Copilot, Cursor, Factory Droid, and Pi. 44 diagram types. Self-contained HTML + SVG. No shadows. No Mermaid slop.",
+          "language": "HTML",
+          "langColor": "#e34c26",
+          "stars": 57976,
+          "forks": 3719,
+          "todayStars": 7901
+        },
+        {
+          "owner": "NationalSecurityAgency",
+          "repo": "ghidra",
+          "url": "https://github.com/NationalSecurityAgency/ghidra",
+          "description": "Ghidra is a software reverse engineering (SRE) framework",
+          "language": "Java",
+          "langColor": "#b07219",
+          "stars": 91138,
+          "forks": 10202,
+          "todayStars": 7602
+        },
+        {
+          "owner": "heygen-com",
+          "repo": "hyperframes",
+          "url": "https://github.com/heygen-com/hyperframes",
+          "description": "Write HTML. Render video. Built for agents.",
+          "language": "TypeScript",
+          "langColor": "#3178c6",
+          "stars": 67050,
+          "forks": 6076,
+          "todayStars": 5883
+        },
+        {
+          "owner": "cursor",
+          "repo": "plugins",
+          "url": "https://github.com/cursor/plugins",
+          "description": "Cursor plugin specification and official plugins",
+          "language": "TypeScript",
+          "langColor": "#3178c6",
+          "stars": 12887,
+          "forks": 1266,
+          "todayStars": 1717
+        },
+        {
+          "owner": "MadsLorentzen",
+          "repo": "ai-job-search",
+          "url": "https://github.com/MadsLorentzen/ai-job-search",
+          "description": "The job search that runs on your machine. AI job application framework built on Claude Code: evaluate postings, tailor CVs, write cover letters, prep interviews. Fork it and own it.",
+          "language": "Python",
+          "langColor": "#3572A5",
+          "stars": 54542,
+          "forks": 17622,
+          "todayStars": 5742
+        }
+      ]
+    },
+    {
       "weekId": "2026-W42",
-      "startDate": "2026-10-11",
-      "endDate": "2026-10-17",
+      "startDate": "2026-10-12",
+      "endDate": "2026-10-18",
       "fetchedAt": "2026-10-16T05:56:18.206Z",
       "repos": [
         {

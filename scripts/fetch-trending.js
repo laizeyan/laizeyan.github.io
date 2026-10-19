@@ -9,26 +9,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TRENDING_URL = "https://github.com/trending";
 const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "trending-data.json");
 
+// 统一用 UTC 计算周一零点：日期区间是「纯日期」，若混用本地零点再 toISOString()
+// 会在 UTC+8 等时区整体提前一天（曾导致 W42 被记成 10-11 ~ 10-17）。
 function getWeekStart(date) {
-  const d = new Date(date);
-  const dayOfWeek = d.getDay();
-  const monday = new Date(d);
-  monday.setDate(d.getDate() - ((dayOfWeek + 6) % 7));
-  monday.setHours(0, 0, 0, 0);
-  return monday;
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayOfWeek = d.getUTCDay(); // 0 = 周日
+  d.setUTCDate(d.getUTCDate() - ((dayOfWeek + 6) % 7));
+  return d;
 }
 
+// ISO 8601 周编号：包含周四的那一周属于该周所在的年份，
+// 因此跨年周（如 2026-01-01）不会被算成上一年的 W53。
 function getWeekId(date) {
   const monday = getWeekStart(date);
-  const yearStart = new Date(monday.getFullYear(), 0, 1);
-  const weekNumber = Math.ceil(((monday - yearStart) / 86400000 + yearStart.getDay() + 1) / 7);
-  return `${monday.getFullYear()}-W${String(weekNumber).padStart(2, "0")}`;
+  const thursday = new Date(monday);
+  thursday.setUTCDate(monday.getUTCDate() + 3);
+  const year = thursday.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(year, 0, 1));
+  const weekNumber = Math.floor((thursday - yearStart) / 86400000 / 7) + 1;
+  return `${year}-W${String(weekNumber).padStart(2, "0")}`;
 }
 
 function getWeekDateRange(date) {
   const monday = getWeekStart(date);
   const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
+  sunday.setUTCDate(monday.getUTCDate() + 6);
 
   return {
     startDate: monday.toISOString().split("T")[0],
