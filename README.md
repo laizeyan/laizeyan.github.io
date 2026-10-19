@@ -39,12 +39,35 @@ pnpm build
 
 ## 部署到 GitHub Pages 用户页
 
-1. 将仓库命名（或重命名）为 `<你的用户名>.github.io`。
-2. 修改 `astro.config.mjs`，把 `site` 改成 `https://<你的用户名>.github.io`
-   （当前为占位值 `https://example.github.io`）。
-   `base` 保持留空，适配用户页根路径 `/`。
-3. 在仓库 **Settings > Pages** 中，Source 选择 **GitHub Actions**。
-4. 推送（或手动 `workflow_dispatch`）到 `main` 分支，
-   触发 `.github/workflows/deploy.yml` 自动构建并部署。
+线上地址：<https://laizeyan.github.io/>（用户页，`base` 保持留空）。
 
-> 注意：`sitemap` 集成依赖正确的 `site` 才能生成绝对链接，上线前务必改好。
+- `astro.config.mjs` 的 `site` 已设为 `https://laizeyan.github.io`，
+  `sitemap` / `robots.txt` / RSS 均依赖它生成绝对链接，换域名时须同步修改。
+- 仓库 **Settings > Pages** 的 Source 已是 **GitHub Actions**（`build_type=workflow`）。
+  若被改回 `Deploy from a branch`，每次 push 会额外触发一次必然失败的 Jekyll 构建
+  （报 `Invalid YAML front matter in *.astro`），且与 Actions 部署互相覆盖。
+- 推送 `main` 即触发 `.github/workflows/deploy.yml` 构建并部署；也可手动
+  `gh workflow run deploy.yml`。
+
+## 自动化任务
+
+| 工作流 | 触发 | 作用 |
+| :--- | :--- | :--- |
+| `deploy.yml` | push `main` / 手动 / trending 更新完成后 | `pnpm build` + 部署 Pages |
+| `update-trending.yml` | 每周五 UTC 00:00（北京 08:00）/ 手动 | 抓取 GitHub Trending 写入 `src/data/trending-data.json` 并提交 |
+
+`scripts/fetch-trending.js` 的周编号按 **ISO 8601**（周一为一周起点）计算，
+日期区间用 UTC 生成，避免 UTC+8 下整体偏移一天。
+
+## 维护检查清单
+
+```bash
+npx astro check      # 须 0 errors / 0 warnings
+pnpm build           # 含 pagefind 索引
+pnpm audit           # 无 high 及以上漏洞
+```
+
+标签索引由 `src/utils/tags.ts` 统一汇总 **博客 + 项目** 的标签，
+新增标签无需改动页面；不要在页面里另建一份标签来源，否则会出现
+`/tags/xxx` 死链。
+
