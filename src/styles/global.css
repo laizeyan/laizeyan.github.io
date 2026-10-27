@@ -201,6 +201,68 @@ body {
   margin: 0 auto;
 }
 
+/* ---- 表格：默认样式下多列表格会被挤成断行（"TypeScri pt"） ----
+   阅读宽度仅 680px，因此表头收紧、字号下调、数字列不换行；
+   窄屏改为横向滚动，而不是把每格压成竖排文字。 */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+  margin: 1.5em 0;
+}
+
+.prose thead th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1.5px solid var(--text);
+  white-space: nowrap;
+}
+
+.prose tbody td {
+  padding: 9px 10px;
+  vertical-align: top;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:hover td {
+  background-color: var(--bg-elevated);
+}
+
+/* 仓库名与数字不折行 */
+.prose td code,
+.prose td {
+  overflow-wrap: normal;
+}
+
+.prose td code {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .prose thead th,
+  .prose tbody td {
+    white-space: nowrap;
+  }
+}
+
 /* ============================================================
    TYPOGRAPHY — DRAMATIC SCALE
    ============================================================ */
