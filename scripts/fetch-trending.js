@@ -1,5 +1,10 @@
 // scripts/fetch-trending.js
-// 抓取 GitHub Trending 每周热门开源项目并沉淀为 JSON 数据
+// 抓取 GitHub Trending 每周热门开源项目并沉淀为 JSON 数据。
+//
+// 发布即冻结：某周一旦有了周报（手写或自动），该周快照不再被后续抓取覆盖。
+// 否则会出现「文章写周一快照、页面显示周五快照」的双份事实——W43 就踩过。
+// 因此周内重跑会创建/更新当周数据，但只有在定稿抓取（每周五的工作流）之后
+// 才会生成周报；生成之后的任何重跑都直接跳过。
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,6 +14,8 @@ import { getWeekId, getWeekDateRange, normalizeWeek } from "./lib/week.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TRENDING_URL = "https://github.com/trending";
 const OUTPUT_FILE = path.join(__dirname, "..", "src", "data", "trending-data.json");
+const BLOG_DIR = path.join(__dirname, "..", "src", "content", "blog");
+const WEEKLY_POST_PREFIX = "github-trending-weekly-";
 
 async function fetchTrending() {
   const url = `${TRENDING_URL}?since=weekly`;
@@ -89,6 +96,23 @@ function loadExisting() {
   }
 }
 
+/**
+ * 该周是否已「发布」——以是否存在同名周报为标志（手写稿与自动稿同等对待）。
+ *
+ * 发布即冻结：周报里的数字必须与 /trending 页面永久一致，否则文章写的是
+ * 周一快照、页面显示周五快照，读者两边对不上。历史上 W43 就踩过这个坑。
+ */
+function isPublished(weekId) {
+  const file = path.join(BLOG_DIR, `${WEEKLY_POST_PREFIX}${weekId.toLowerCase()}.md`);
+  return fs.existsSync(file);
+}
+
+/** 把现有数据写回磁盘（校正结果也要落盘）。 */
+function persist(data) {
+  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(data, null, 2));
+}
+
 async function main() {
   const now = new Date();
   const weekId = getWeekId(now);
@@ -98,12 +122,31 @@ async function main() {
 
   // 顺带校正历史周次的 ISO 对齐：早期版本用本地时区计算，
   // 在 UTC+8 下会把区间整体提前一天（W42 曾是 10-11~10-17）。
+  // 已发布周次不动：改日期会让文章里的区间与页面不一致。
   let repaired = 0;
   for (const week of existingData.weeks) {
+    if (isPublished(week.weekId)) {
+      // 用副本探测，避免真的改到已发布的数据
+      if (normalizeWeek({ ...week })) {
+        console.warn(
+          `[Trending] ${week.weekId} 已发布周报但日期不符合 ISO 口径，为保证文章与页面一致，跳过校正。`
+        );
+      }
+      continue;
+    }
     if (normalizeWeek(week)) {
       repaired += 1;
       console.log(`[Trending] 已校正历史周次: ${week.weekId} (${week.startDate} ~ ${week.endDate})`);
     }
+  }
+
+  // 本周已发布 → 快照冻结，连网络请求都不必发。
+  // 这条分支同时也是「周报只在数据定稿后生成」的保障：
+  // 任何周内重跑都不会再改动已见报的数字。
+  if (existingData.weeks.some((w) => w.weekId === weekId) && isPublished(weekId)) {
+    console.log(`[Trending] ${weekId} 的周报已发布，本周快照冻结，跳过抓取与覆盖。`);
+    if (repaired > 0) persist(existingData);
+    return { weekId, updated: false, frozen: true, repaired, total: existingData.weeks.length };
   }
 
   let html;
@@ -112,7 +155,7 @@ async function main() {
   } catch (err) {
     // 抓取失败也要把历史校正写回去，否则修复永远落不了盘
     if (repaired > 0) {
-      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
+      persist(existingData);
       console.log(`[Trending] 抓取失败，但已写回 ${repaired} 条历史校正。`);
     }
     throw err;
@@ -122,10 +165,8 @@ async function main() {
 
   if (repos.length === 0) {
     console.warn("[Trending] 警告: 未解析到任何仓库，保持现有数据不变。");
-    if (repaired > 0) {
-      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
-    }
-    return { weekId, updated: false, repaired, total: existingData.weeks.length };
+    if (repaired > 0) persist(existingData);
+    return { weekId, updated: false, frozen: false, repaired, total: existingData.weeks.length };
   }
 
   const weekData = {
@@ -148,11 +189,10 @@ async function main() {
   // 按周ID倒序排列
   existingData.weeks.sort((a, b) => b.weekId.localeCompare(a.weekId));
 
-  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(existingData, null, 2));
+  persist(existingData);
   console.log(`[Trending] 保存完毕，历史总周数: ${existingData.weeks.length}`);
 
-  return { weekId, updated: true, repaired, total: existingData.weeks.length };
+  return { weekId, updated: true, frozen: false, repaired, total: existingData.weeks.length };
 }
 
 main()
@@ -161,7 +201,7 @@ main()
     if (process.env.GITHUB_OUTPUT) {
       fs.appendFileSync(
         process.env.GITHUB_OUTPUT,
-        `week_id=${result.weekId}\nupdated=${result.updated}\nrepaired=${result.repaired}\n`
+        `week_id=${result.weekId}\nupdated=${result.updated}\nfrozen=${result.frozen}\nrepaired=${result.repaired}\n`
       );
     }
   })

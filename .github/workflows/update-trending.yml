@@ -5,6 +5,11 @@ on:
     # 每周五 UTC 00:00 自动运行（北京时间上午 08:00）
     - cron: "0 0 * * 5"
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "生成周报并冻结本周快照（周四/周五定稿时勾选）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -34,6 +39,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # 每周五的定时任务才是「定稿」抓取；手动触发默认只更新数据不发布，
+      # 避免周中抓一份半周数据就被冻成周报。
       - name: Fetch Trending data
         id: fetch
         run: node scripts/fetch-trending.js
@@ -42,6 +49,7 @@ jobs:
       # 因此手写内容始终优先，不会被覆盖。
       - name: Generate weekly post
         id: post
+        if: steps.fetch.outputs.frozen != 'true' && (github.event_name == 'schedule' || inputs.publish)
         run: node scripts/generate-weekly-post.js
 
       - name: Verify content
